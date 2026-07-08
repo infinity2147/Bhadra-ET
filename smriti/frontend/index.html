@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>SMRITI — Unit 4 Operations Brain</title>
+<link rel="stylesheet" href="/static/style.css?v=3">
+</head>
+<body data-palette="#2a78d6,#1baf7a">
+<header class="appbar">
+  <div class="brand">
+    <span class="brand-mark">स्मृ</span>
+    <div class="brand-text">
+      <strong>SMRITI</strong>
+      <small>Refinery Unit 4 · Operations Brain</small>
+    </div>
+  </div>
+  <div id="graph-chip" class="graph-chip" title="knowledge fabric size">…</div>
+</header>
+
+<main id="views">
+  <!-- ASK -->
+  <section id="view-ask" class="view active">
+    <div id="thread" class="thread">
+      <div class="welcome">
+        <h2>Ask the plant&rsquo;s memory</h2>
+        <p>Every drawing, work order, procedure, inspection, near-miss and
+           regulation of Unit 4 — fused into one graph you can talk to.</p>
+        <div class="suggestions">
+          <button class="sugg">P-101 keeps tripping on high temperature — what feeds it, has this happened before, and what does the manual say to check?</button>
+          <button class="sugg">Why does P-101 keep failing?</button>
+          <button class="sugg">What is the current procedure for P-101 / P-102 changeover?</button>
+          <button class="sugg">Is there any risk with the confined space entry planned for TK-401 tomorrow?</button>
+        </div>
+      </div>
+    </div>
+    <form id="ask-form" class="askbar">
+      <input id="ask-input" type="text" placeholder="Ask about equipment, history, procedures, compliance…"
+             autocomplete="off">
+      <button type="submit" id="ask-send" aria-label="ask">➤</button>
+    </form>
+  </section>
+
+  <!-- RCA -->
+  <section id="view-rca" class="view">
+    <div class="panel-head">
+      <h2>Root Cause Analysis</h2>
+      <p class="hint">Graph-native reasoning over the full maintenance, inspection
+         and incident history — plus sister equipment.</p>
+      <div class="row">
+        <select id="rca-tag"></select>
+        <input id="rca-symptom" type="text" placeholder="symptom (optional)">
+        <button id="rca-run" class="primary">Analyze</button>
+      </div>
+    </div>
+    <div id="rca-out" class="scroll-pane"></div>
+  </section>
+
+  <!-- WARNINGS -->
+  <section id="view-warn" class="view">
+    <div class="panel-head">
+      <h2>Proactive Warnings</h2>
+      <p class="hint">Upcoming work matched against precursor signatures mined from
+         the plant&rsquo;s own incident history.</p>
+      <button id="warn-refresh" class="primary">Evaluate upcoming work</button>
+    </div>
+    <div id="warn-out" class="scroll-pane"></div>
+    <div class="panel-head"><h3>Systemic patterns</h3></div>
+    <div id="patterns-out" class="scroll-pane"></div>
+  </section>
+
+  <!-- COMPLIANCE -->
+  <section id="view-comp" class="view">
+    <div class="panel-head">
+      <h2>Compliance Register</h2>
+      <p class="hint">Real OISD / Factories Act / PESO clauses mapped to Unit 4
+         equipment and evaluated against actual records.</p>
+      <div class="row">
+        <input id="audit-scope" type="text" placeholder="audit scope, e.g. OISD or T-301">
+        <button id="audit-btn" class="primary">Generate audit pack</button>
+      </div>
+    </div>
+    <div id="comp-summary" class="tiles"></div>
+    <div id="comp-out" class="scroll-pane"></div>
+  </section>
+
+  <!-- EVALS -->
+  <section id="view-eval" class="view">
+    <div class="panel-head">
+      <h2>Evaluation — measured, not claimed</h2>
+      <p class="hint">Golden-set metrics, LLM-judged. SMRITI tri-modal fabric vs a
+         vanilla single-vector RAG baseline over the same corpus and model.</p>
+    </div>
+    <div id="eval-tiles" class="tiles"></div>
+    <div id="eval-chart" class="chart-card"></div>
+    <div id="eval-table" class="scroll-pane"></div>
+  </section>
+</main>
+
+<nav class="tabbar">
+  <button data-view="ask" class="tab active"><span>💬</span>Ask</button>
+  <button data-view="rca" class="tab"><span>🔧</span>RCA</button>
+  <button data-view="warn" class="tab"><span>⚠️</span>Warnings</button>
+  <button data-view="comp" class="tab"><span>📋</span>Compliance</button>
+  <button data-view="eval" class="tab"><span>📈</span>Evals</button>
+</nav>
+
+<!-- citation drawer -->
+<div id="drawer" class="drawer hidden">
+  <div class="drawer-head">
+    <strong id="drawer-title"></strong>
+    <button id="drawer-close">✕</button>
+  </div>
+  <div id="drawer-body"></div>
+</div>
+<div id="scrim" class="scrim hidden"></div>
+
+<script src="/static/app.js?v=3"></script>
+</body>
+</html>

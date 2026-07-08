@@ -1,0 +1,6 @@
+From: S. Venkatesan <s.venkatesan@bharatpetrochem.example>
+To: Rotork service
+Date: 2021-02-09
+Subject: RFI: MOV-110 torque alarm on opening stroke
+
+MOV-110 (IQ3) intermittently alarms high torque at 20% open. Partial stroke tests otherwise normal. Please advise inspection points.

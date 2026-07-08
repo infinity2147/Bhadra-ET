@@ -1,0 +1,11 @@
+From: N. Kaur <n.kaur@bharatpetrochem.example>
+To: J. Reddy
+Date: 2024-11-03
+Subject: PSV-1101 test deferral - flag for compliance register
+
+Jyoti,
+
+PSV-1101 (P-101 discharge relief) was bench tested 2022-04-12 and fell due within the OISD-STD-132 periodicity window this year. The removal was planned with the October shutdown, which slipped to 2026. As of today the valve is PAST its test due date and I do not see a revalidation or deferral approval on file. Please carry this on the compliance register until the test is done.
+
+PSV-3101 was done 2025-03-06 and is fine.
+N.

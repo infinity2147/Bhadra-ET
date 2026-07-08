@@ -1,0 +1,34 @@
+[
+ {
+  "id": "PTW-2019-0288",
+  "ptype": "Confined Space Entry",
+  "date": "2019-08-24",
+  "equipment": "TK-401",
+  "area": "Area 4",
+  "text": "Entry for desludging. Purge started 06:10, entry 08:25. Gas test 07:55: O2 20.8%, H2S 2 ppm, LEL 0%. See NM-2019-07."
+ },
+ {
+  "id": "PTW-2022-0871",
+  "ptype": "Confined Space Entry",
+  "date": "2022-09-13",
+  "equipment": "TK-401",
+  "area": "Area 4",
+  "text": "Entry for sludge raking ahead of coating survey. Purge 05:40-08:30. Gas test 08:35 passed. See NM-2022-31."
+ },
+ {
+  "id": "PTW-2020-0104",
+  "ptype": "Hot Work",
+  "date": "2020-03-11",
+  "equipment": "T-302",
+  "area": "Area 3",
+  "text": "Grinding at mixer flange platform. Gas test 06:50 (work started 10:05). See INC-2020-03."
+ },
+ {
+  "id": "PTW-2026-0902",
+  "ptype": "Confined Space Entry",
+  "date": "2026-07-09",
+  "equipment": "TK-401",
+  "area": "Area 4",
+  "text": "SCHEDULED: Confined space entry into TK-401 equalization tank planned for 2026-07-09 08:00 for internal coating inspection and sludge removal. Isolation per SOP-ET-005; P-107 LOTO. Eductor purge planned 06:00-08:00 (2 h) to meet the inspection contractor window. Gas test scheduled 07:45. Authorized by: M. Pillai."
+ }
+]

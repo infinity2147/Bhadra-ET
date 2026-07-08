@@ -1,0 +1,500 @@
+[
+ {
+  "q": "P-101 keeps tripping on high temperature - what feeds it, has this happened before, and what does the manual say to check?",
+  "category": "multi_modal_fusion",
+  "modality": [
+   "graph",
+   "text",
+   "visual"
+  ],
+  "expect": [
+   "CT-101 feeds STR-101 which feeds P-101 (cooling water supply)",
+   "two high-temperature trips in monsoon 2025: WO-2025-4471 and WO-2025-4620",
+   "root cause was fouled E-201 cooler (plus STR-101 blinding)",
+   "OEM manual section 7.3: check cooler fouling, strainer dP, seal flush line"
+  ],
+  "citations": [
+   "D-CW-104",
+   "WO-2025-4471",
+   "WO-2025-4620",
+   "OEM-BURGFLOW-IOM-S7"
+  ]
+ },
+ {
+  "q": "Why does P-101 keep failing?",
+  "category": "rca",
+  "modality": [
+   "graph",
+   "text"
+  ],
+  "expect": [
+   "recurring mechanical seal failures concentrated in monsoon months (2019, 2021, 2023, 2024, 2025)",
+   "causal chain: monsoon rain -> CT-101 basin turbidity -> STR-101 blinding -> cavitation -> seal face damage",
+   "same pattern on sister pumps P-103 and P-107 (same MS-40D seal)",
+   "mitigation: SOP-CW-012 rev 3 monsoon seal-flush verification"
+  ],
+  "citations": [
+   "WO-2023-0771",
+   "WO-2019-0712",
+   "WO-2021-0843",
+   "EMAIL-2023-07-25-sharma"
+  ]
+ },
+ {
+  "q": "Prepare us for an OISD audit on the fuel storage area.",
+  "category": "compliance",
+  "modality": [
+   "graph",
+   "text"
+  ],
+  "expect": [
+   "fire/emergency drill record for Area 3 is stale (last 2025-01-15)",
+   "PSV-1101 test overdue per OISD-STD-132 periodicity (last tested 2022-04-12)",
+   "T-301 external inspection due 2026-11-20 (OISD-129 five-year interval)",
+   "PSV-3101 and fire water weekly tests are compliant evidence"
+  ],
+  "citations": [
+   "INSP-FIREDRILL-2025-01-15",
+   "EMAIL-2024-11-03-kaur",
+   "INSP-T301-2021-11-20"
+  ]
+ },
+ {
+  "q": "What is the current procedure for P-101 / P-102 changeover and what changed in the latest revision?",
+  "category": "temporal",
+  "modality": [
+   "text",
+   "graph"
+  ],
+  "expect": [
+   "current is SOP-CW-012 rev 3 (effective 2025-04-15)",
+   "rev 3 added monsoon-mode weekly seal flush (Plan 11) verification",
+   "rev 2 (2021) had added the STR-101 dP check before start"
+  ],
+  "citations": [
+   "SOP-CW-012_rev3",
+   "SOP-CW-012_rev2"
+  ]
+ },
+ {
+  "q": "What feeds into pump P-101?",
+  "category": "graph_lookup",
+  "modality": [
+   "graph"
+  ],
+  "expect": [
+   "STR-101 suction strainer immediately upstream",
+   "CT-101 cooling tower upstream of the strainer"
+  ],
+  "citations": [
+   "D-CW-104"
+  ]
+ },
+ {
+  "q": "Is there any risk with the confined space entry planned for TK-401 tomorrow?",
+  "category": "proactive",
+  "modality": [
+   "graph",
+   "text"
+  ],
+  "expect": [
+   "planned purge is only 2 hours; SOP-ET-005 requires minimum 4 hours",
+   "two prior near-misses NM-2019-07 and NM-2022-31 had the same precursor signature",
+   "sludge disturbance can re-release H2S even after a passing gas test"
+  ],
+  "citations": [
+   "NM-2019-07",
+   "NM-2022-31",
+   "SOP-ET-005"
+  ]
+ },
+ {
+  "q": "What is the seal model used on P-101?",
+  "category": "factual",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   "BurgFlow MS-40D cartridge seal"
+  ],
+  "citations": [
+   "WO-2019-0712"
+  ]
+ },
+ {
+  "q": "When was PSV-1101 last bench tested and what was the result?",
+  "category": "factual",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   "2022-04-12",
+   "pass / recertified"
+  ],
+  "citations": [
+   "WO-2022-0410"
+  ]
+ },
+ {
+  "q": "What is the trip setpoint context for TI-1103 on P-101?",
+  "category": "factual",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   "trip at 65 degC; reached 68 degC in the July 2025 event"
+  ],
+  "citations": [
+   "WO-2025-4471"
+  ]
+ },
+ {
+  "q": "Which drawing shows the cooling water system and what revision is current?",
+  "category": "factual",
+  "modality": [
+   "visual",
+   "text"
+  ],
+  "expect": [
+   "D-CW-104 rev 3"
+  ],
+  "citations": [
+   "D-CW-104"
+  ]
+ },
+ {
+  "q": "Who authored the analysis connecting monsoon turbidity to seal failures?",
+  "category": "factual",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   "R. K. Sharma, senior reliability engineer"
+  ],
+  "citations": [
+   "EMAIL-2023-07-25-sharma",
+   "WO-2023-0771"
+  ]
+ },
+ {
+  "q": "What are the gas test acceptance limits for TK-401 entry?",
+  "category": "factual",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   "O2 19.5-23.5%",
+   "H2S < 10 ppm",
+   "LEL < 5%",
+   "repeat every 30 minutes"
+  ],
+  "citations": [
+   "SOP-ET-005"
+  ]
+ },
+ {
+  "q": "What does the Rotork manual suggest for MOV-110's intermittent torque alarm?",
+  "category": "factual",
+  "modality": [
+   "visual",
+   "text"
+  ],
+  "expect": [
+   "seat/disc debris, stem lubrication, CW scale build-up; retrieve torque-position log"
+  ],
+  "citations": [
+   "OEM-ROTORK-IQ3-S6",
+   "EMAIL-2021-02-12-rfi-reply"
+  ]
+ },
+ {
+  "q": "What is the minimum fire water header pressure target in the weekly test?",
+  "category": "factual",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   ">= 8.5 kg/cm2 per OISD-STD-116 practice"
+  ],
+  "citations": [
+   "SOP-FW-002"
+  ]
+ },
+ {
+  "q": "What else shares the cooling water loop that feeds P-101?",
+  "category": "multi_hop",
+  "modality": [
+   "graph"
+  ],
+  "expect": [
+   "P-102 standby on the same strainer",
+   "E-201 and E-202 exchangers",
+   "P-103 booster downstream"
+  ],
+  "citations": [
+   "D-CW-104"
+  ]
+ },
+ {
+  "q": "Which equipment items use the BurgFlow MS-40D seal and which of them have failed?",
+  "category": "multi_hop",
+  "modality": [
+   "graph",
+   "text"
+  ],
+  "expect": [
+   "P-101, P-102, P-103, P-107 use it",
+   "failures recorded on P-101, P-103, P-107"
+  ],
+  "citations": [
+   "WO-2025-0655",
+   "WO-2024-0733",
+   "WO-2023-0921"
+  ]
+ },
+ {
+  "q": "If STR-101 blinds, which downstream equipment is at risk and why?",
+  "category": "multi_hop",
+  "modality": [
+   "graph",
+   "text"
+  ],
+  "expect": [
+   "P-101/P-102 cavitation and seal damage",
+   "reduced CW flow raises P-101 discharge temperature via E-201"
+  ],
+  "citations": [
+   "D-CW-104",
+   "WO-2025-4471"
+  ]
+ },
+ {
+  "q": "Trace the path of cooling water from the tower to Area 2.",
+  "category": "multi_hop",
+  "modality": [
+   "graph"
+  ],
+  "expect": [
+   "CT-101 -> STR-101 -> P-101 (or P-102) -> MOV-110 -> E-201 -> P-103 -> Area 2 header"
+  ],
+  "citations": [
+   "D-CW-104"
+  ]
+ },
+ {
+  "q": "What consequential damage followed the 2023 P-101 seal failure?",
+  "category": "multi_hop",
+  "modality": [
+   "text",
+   "graph"
+  ],
+  "expect": [
+   "bearing distress / DE bearing replacement (INC-2023-08) after running with failed seal"
+  ],
+  "citations": [
+   "INC-2023-08",
+   "WO-2023-0771"
+  ]
+ },
+ {
+  "q": "Is the P-101 seal problem seasonal? Show the evidence.",
+  "category": "rca",
+  "modality": [
+   "text",
+   "graph"
+  ],
+  "expect": [
+   "all failures fall June-September",
+   "STR-101 dP inspections high only in monsoon months"
+  ],
+  "citations": [
+   "INSP-STR101-2023-07-18",
+   "WO-2021-0843"
+  ]
+ },
+ {
+  "q": "Do P-103 or P-107 show the same failure pattern as P-101?",
+  "category": "rca",
+  "modality": [
+   "graph",
+   "text"
+  ],
+  "expect": [
+   "yes - P-103 failed Aug 2022 and Jul 2024; P-107 failed Sep 2023; same seal model and wet-season timing"
+  ],
+  "citations": [
+   "WO-2022-0808",
+   "WO-2024-0733",
+   "WO-2023-0921"
+  ]
+ },
+ {
+  "q": "What has actually reduced the impact of P-101 seal failures?",
+  "category": "rca",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   "SOP-CW-012 rev 3 weekly monsoon flush verification caught the 2025 failure early, halving downtime"
+  ],
+  "citations": [
+   "WO-2025-0655",
+   "SOP-CW-012_rev3"
+  ]
+ },
+ {
+  "q": "What recurring causes appear across TK-401 confined space near-misses?",
+  "category": "rca",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   "purge shortened below 4 h in both events",
+   "monsoon-season sludge load",
+   "gas re-release on sludge disturbance"
+  ],
+  "citations": [
+   "NM-2019-07",
+   "NM-2022-31"
+  ]
+ },
+ {
+  "q": "Which relief valves are overdue for testing?",
+  "category": "compliance",
+  "modality": [
+   "graph",
+   "text"
+  ],
+  "expect": [
+   "PSV-1101 overdue (last test 2022-04-12, shutdown slip, flagged Nov 2024)",
+   "PSV-3101 in date (2025-03-06)"
+  ],
+  "citations": [
+   "EMAIL-2024-11-03-kaur",
+   "WO-2022-0410",
+   "WO-2025-0301"
+  ]
+ },
+ {
+  "q": "When is T-301 due for its next external inspection?",
+  "category": "compliance",
+  "modality": [
+   "text",
+   "graph"
+  ],
+  "expect": [
+   "plant records assume a five-year interval (next 2026-11-20 from the 2021-11-20 inspection)",
+   "but OISD-STD-129 clause 11.1 requires visual external inspection once a YEAR, so T-301 is already overdue and the plant's assumed interval conflicts with the standard"
+  ],
+  "citations": [
+   "INSP-T301-2021-11-20",
+   "OISD-129-11.1"
+  ]
+ },
+ {
+  "q": "Are fire drills for the tank farm up to date?",
+  "category": "compliance",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   "no - last recorded drill 2025-01-15, several quarters stale for an MAH unit"
+  ],
+  "citations": [
+   "INSP-FIREDRILL-2025-01-15",
+   "EMAIL-2026-05-20-reddy"
+  ]
+ },
+ {
+  "q": "What did rev 2 of SOP-CW-012 add and why?",
+  "category": "temporal",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   "STR-101 dP check before pump start, added after the 2021 seal failure WO-2021-0843"
+  ],
+  "citations": [
+   "SOP-CW-012_rev2"
+  ]
+ },
+ {
+  "q": "Which procedure governs hot work and what changed after the 2020 T-302 fire?",
+  "category": "temporal",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   "SOP-HW-001; rev 3 requires gas test immediately before work and revalidation"
+  ],
+  "citations": [
+   "SOP-HW-001",
+   "INC-2020-03"
+  ]
+ },
+ {
+  "q": "Show me where PSV-1101 is on the cooling water drawing.",
+  "category": "visual",
+  "modality": [
+   "visual",
+   "graph"
+  ],
+  "expect": [
+   "relief branch off the P-101 discharge line on D-CW-104"
+  ],
+  "citations": [
+   "D-CW-104"
+  ]
+ },
+ {
+  "q": "Which instrument measures P-101 discharge temperature and where is it?",
+  "category": "visual",
+  "modality": [
+   "graph",
+   "visual"
+  ],
+  "expect": [
+   "TI-1103, on the P-101 discharge run near MOV-110/E-201 on D-CW-104"
+  ],
+  "citations": [
+   "D-CW-104"
+  ]
+ },
+ {
+  "q": "Find the OEM page about cartridge seal installation torque values.",
+  "category": "visual",
+  "modality": [
+   "visual"
+  ],
+  "expect": [
+   "BurgFlow IOM section 4: gland bolts 25 Nm star pattern"
+  ],
+  "citations": [
+   "OEM-BURGFLOW-IOM-S4"
+  ]
+ },
+ {
+  "q": "What is the vibration alarm setpoint for compressor K-501?",
+  "category": "insufficient_evidence",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   "no K-501 exists in the corpus - system should say it lacks evidence"
+  ],
+  "citations": []
+ },
+ {
+  "q": "What chemical is dosed at CT-101 and at what rate?",
+  "category": "partial_evidence",
+  "modality": [
+   "text"
+  ],
+  "expect": [
+   "biocide and dispersant dosing mentioned; exact rate not in corpus - should say so"
+  ],
+  "citations": [
+   "SOP-CT-006"
+  ]
+ }
+]

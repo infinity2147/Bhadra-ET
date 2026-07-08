@@ -1,0 +1,6 @@
+From: A. Deshpande <a.deshpande@bharatpetrochem.example>
+To: Stores
+Date: 2025-06-30
+Subject: Min-max review: MS-40D cartridge seals
+
+Given the recurring monsoon seal consumption on P-101/P-103/P-107, raise min stock of BurgFlow MS-40D cartridges from 1 to 3 between May and October.

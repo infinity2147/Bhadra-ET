@@ -1,0 +1,6 @@
+From: Rotork service <service@rotork.example>
+To: S. Venkatesan
+Date: 2021-02-12
+Subject: RE: RFI: MOV-110 torque alarm
+
+Likely seat debris or stem lubrication. Recommend stem clean/re-grease and a full stroke at next opportunity; check disc for CW scale build-up - common on cooling water isolation duty.

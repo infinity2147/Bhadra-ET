@@ -1,0 +1,67 @@
+{
+ "drawing_number": "D-ET-401",
+ "title": "EFFLUENT TREATMENT \u2014 AREA 4",
+ "rev": "1",
+ "image": "D-ET-401.png",
+ "width": 2400,
+ "height": 1520,
+ "regions": [
+  {
+   "tag": "TK-401",
+   "symbol_class": "storage_tank",
+   "bbox": [
+    392,
+    276,
+    628,
+    588
+   ]
+  },
+  {
+   "tag": "P-107",
+   "symbol_class": "centrifugal_pump",
+   "bbox": [
+    980,
+    364,
+    1100,
+    528
+   ]
+  },
+  {
+   "tag": "MOV-410",
+   "symbol_class": "valve",
+   "bbox": [
+    1288,
+    428,
+    1352,
+    536
+   ]
+  },
+  {
+   "tag": "LI-4011",
+   "symbol_class": "instrument",
+   "bbox": [
+    326,
+    206,
+    394,
+    274
+   ]
+  }
+ ],
+ "connectivity": [
+  {
+   "src": "TK-401",
+   "dst": "P-107",
+   "via": "pipe"
+  },
+  {
+   "src": "P-107",
+   "dst": "MOV-410",
+   "via": "pipe"
+  },
+  {
+   "src": "MOV-410",
+   "dst": "ETP-OUTFALL",
+   "via": "TO ETP OUTFALL"
+  }
+ ]
+}

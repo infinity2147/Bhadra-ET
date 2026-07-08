@@ -1,0 +1,26 @@
+{
+ "rks": {
+  "name": "R. K. Sharma",
+  "role": "Senior Reliability Engineer (retiring Dec 2026)"
+ },
+ "ad": {
+  "name": "A. Deshpande",
+  "role": "Maintenance Planner"
+ },
+ "sv": {
+  "name": "S. Venkatesan",
+  "role": "Shift Supervisor"
+ },
+ "mp": {
+  "name": "M. Pillai",
+  "role": "Safety Officer"
+ },
+ "nk": {
+  "name": "N. Kaur",
+  "role": "Inspection Engineer"
+ },
+ "jr": {
+  "name": "J. Reddy",
+  "role": "Compliance Officer"
+ }
+}

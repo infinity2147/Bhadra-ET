@@ -1,0 +1,178 @@
+[
+ {
+  "id": "SOP-CW-012",
+  "rev": 1,
+  "date": "2015-03-10",
+  "title": "Operation & Changeover of CW Pumps P-101 / P-102",
+  "steps": [
+   "1. Confirm CT-101 basin level > 60% on local gauge.",
+   "2. Open suction valve fully; crack open discharge valve.",
+   "3. Start selected pump (P-101 duty / P-102 standby) from MCC.",
+   "4. Slowly open discharge valve; confirm PI-1101 within 3.2-3.8 kg/cm2.",
+   "5. Confirm flow on FI-1102 > 420 m3/h.",
+   "6. For changeover, start standby pump first, then stop duty pump.",
+   "7. Log changeover in shift register."
+  ],
+  "hazards": "Rotating equipment; water hammer on fast valve operation."
+ },
+ {
+  "id": "SOP-CW-012",
+  "rev": 2,
+  "date": "2021-09-01",
+  "title": "Operation & Changeover of CW Pumps P-101 / P-102",
+  "steps": [
+   "1. Confirm CT-101 basin level > 60% on local gauge.",
+   "2. CHECK STR-101 DIFFERENTIAL PRESSURE: if dP > 0.4 bar, arrange strainer cleaning BEFORE pump start (added rev 2 after 2021 seal failure, ref WO-2021-0843).",
+   "3. Open suction valve fully; crack open discharge valve.",
+   "4. Start selected pump from MCC.",
+   "5. Slowly open discharge valve; confirm PI-1101 within 3.2-3.8 kg/cm2.",
+   "6. Confirm flow on FI-1102 > 420 m3/h.",
+   "7. For changeover, start standby pump first, then stop duty pump.",
+   "8. Log changeover and STR-101 dP reading in shift register."
+  ],
+  "hazards": "Rotating equipment; water hammer; cavitation at blinded strainer."
+ },
+ {
+  "id": "SOP-CW-012",
+  "rev": 3,
+  "date": "2025-04-15",
+  "title": "Operation & Changeover of CW Pumps P-101 / P-102",
+  "steps": [
+   "1. Confirm CT-101 basin level > 60% on local gauge.",
+   "2. Check STR-101 differential pressure: if dP > 0.4 bar, arrange strainer cleaning before pump start.",
+   "3. MONSOON MODE (June-September): perform WEEKLY seal flush (Plan 11) verification on P-101 and P-102 - confirm flush flow at the rotameter and no blockage at the flush orifice. Added rev 3 from lessons learned in WO-2024-0912 / reliability review 2025 (R.K. Sharma).",
+   "4. Open suction valve fully; crack open discharge valve.",
+   "5. Start selected pump from MCC.",
+   "6. Slowly open discharge valve; confirm PI-1101 within 3.2-3.8 kg/cm2.",
+   "7. Confirm flow on FI-1102 > 420 m3/h.",
+   "8. For changeover, start standby pump first, then stop duty pump.",
+   "9. Log changeover, STR-101 dP and (monsoon) flush verification in shift register."
+  ],
+  "hazards": "Rotating equipment; water hammer; cavitation at blinded strainer; seal failure spray hazard."
+ },
+ {
+  "id": "SOP-ET-005",
+  "rev": 2,
+  "date": "2023-05-20",
+  "title": "Confined Space Entry - TK-401 Equalization Tank",
+  "steps": [
+   "1. Obtain confined space entry permit (PTW) authorized by Safety Officer.",
+   "2. Isolate TK-401: blind inlet and outlet lines, LOTO P-107.",
+   "3. Drain and flush tank; remove sludge as far as practicable from outside.",
+   "4. FORCED VENTILATION / AIR PURGE: run eductor for MINIMUM 4 HOURS before entry. Do not shorten purge for schedule reasons (ref near-miss NM-2019-07, NM-2022-31).",
+   "5. Gas test by competent person: O2 19.5-23.5%, H2S < 10 ppm, LEL < 5% - IMMEDIATELY BEFORE entry and REPEAT EVERY 30 MINUTES during work.",
+   "6. CAUTION: disturbing settled sludge can re-release H2S even after a passing initial gas test. Continuous monitor mandatory inside.",
+   "7. Standby attendant at manway at all times; rescue tripod rigged.",
+   "8. Entry log maintained; permit closed on exit."
+  ],
+  "hazards": "H2S from sludge; oxygen deficiency; engulfment."
+ },
+ {
+  "id": "SOP-FW-002",
+  "rev": 1,
+  "date": "2019-02-01",
+  "title": "Weekly Fire Water Pump Test - Unit 4",
+  "steps": [
+   "1. Notify control room.",
+   "2. Auto-start test on pressure drop simulation.",
+   "3. Record jockey/main/diesel pump start pressures.",
+   "4. Run main pump 30 min; log header pressure (target >= 8.5 kg/cm2 per OISD-STD-116).",
+   "5. Restore auto lineup."
+  ],
+  "hazards": "High pressure water; rotating equipment."
+ },
+ {
+  "id": "SOP-TK-014",
+  "rev": 1,
+  "date": "2020-06-10",
+  "title": "Manual Gauging & Sampling of T-301 / T-302",
+  "steps": [
+   "1. Verify tank not receiving/dispatching.",
+   "2. Bond sampling equipment; use only conductive tape.",
+   "3. Wait 30 min after any transfer before gauging (static electricity).",
+   "4. Record level, temperature, water cut.",
+   "5. Close gauge hatch fully."
+  ],
+  "hazards": "Flammable atmosphere at gauge hatch; static discharge."
+ },
+ {
+  "id": "SOP-EX-003",
+  "rev": 1,
+  "date": "2018-04-22",
+  "title": "E-201 Exchanger Backflush / Chemical Cleaning",
+  "steps": [
+   "1. Swap CW duty to P-102 leg / E-202 trim as applicable.",
+   "2. Isolate E-201 CW side; connect backflush hoses.",
+   "3. Backflush against normal flow for 2 h; monitor effluent clarity.",
+   "4. If approach temperature not restored, circulate approved descalant 4 h.",
+   "5. Neutralize, drain to ETP via TK-401, restore lineup."
+  ],
+  "hazards": "Chemical handling; pressurized hoses."
+ },
+ {
+  "id": "SOP-HW-001",
+  "rev": 3,
+  "date": "2022-01-05",
+  "title": "Hot Work Permit Procedure - Unit 4",
+  "steps": [
+   "1. Gas test at worksite; LEL must be 0% for welding in Area 3.",
+   "2. Fire watch posted with extinguisher.",
+   "3. Screens and drain covers in place.",
+   "4. Permit valid one shift only; revalidate after breaks.",
+   "5. Post-work fire watch 30 min."
+  ],
+  "hazards": "Ignition of hydrocarbon vapors."
+ },
+ {
+  "id": "SOP-LOTO-001",
+  "rev": 2,
+  "date": "2021-11-11",
+  "title": "Lockout-Tagout of Rotating Equipment",
+  "steps": [
+   "1. Identify all energy sources at MCC and field.",
+   "2. Apply personal locks and tags; try-start test.",
+   "3. Record in LOTO register; remove only by lock owner."
+  ],
+  "hazards": "Stored energy; inadvertent start."
+ },
+ {
+  "id": "SOP-CT-006",
+  "rev": 1,
+  "date": "2019-08-30",
+  "title": "CT-101 Cooling Tower Basin Cleaning & Dosing",
+  "steps": [
+   "1. Reduce CW demand; swing to single-pump operation.",
+   "2. Vacuum basin silt quadrant by quadrant (monsoon: monthly; dry season: quarterly).",
+   "3. Verify biocide and dispersant dosing rates.",
+   "4. Record basin turbidity sample result."
+  ],
+  "hazards": "Legionella aerosol; slippery surfaces."
+ },
+ {
+  "id": "SOP-PSV-002",
+  "rev": 1,
+  "date": "2017-05-16",
+  "title": "PSV Removal, Bench Testing and Reinstallation",
+  "steps": [
+   "1. Confirm equipment depressurized and isolated.",
+   "2. Remove PSV; tag with location and set pressure.",
+   "3. Bench pop test at certified shop; witness by Inspection.",
+   "4. Recertify, fit new gaskets, reinstall, seal wire.",
+   "5. Update test register and certificate file (OISD-STD-132 periodicity)."
+  ],
+  "hazards": "Trapped pressure; lifting."
+ },
+ {
+  "id": "SOP-MOV-004",
+  "rev": 1,
+  "date": "2016-09-12",
+  "title": "MOV-110 Operation and Partial Stroke Test",
+  "steps": [
+   "1. Confirm CW system lineup allows brief flow disturbance.",
+   "2. Initiate partial stroke from panel; observe torque curve.",
+   "3. Full stroke annually during shutdown only.",
+   "4. Record stroke time and torque signature."
+  ],
+  "hazards": "Flow transient; pinch points."
+ }
+]

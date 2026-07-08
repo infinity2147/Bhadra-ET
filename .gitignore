@@ -1,0 +1,16 @@
+# Python virtual environment (regenerate from smriti/requirements.txt)
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Built fabric artifacts — regenerate with scripts/gen_corpus.py + `python -m smriti.ingest`
+smriti/data/
+data/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+node_modules/
+*.log

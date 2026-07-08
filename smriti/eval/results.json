@@ -1,0 +1,730 @@
+{
+ "n_questions": 33,
+ "total_planned": 33,
+ "aggregate": {
+  "smriti": {
+   "faithfulness": 0.966,
+   "citation_correctness": 0.966,
+   "answer_coverage": 0.864,
+   "latency_s": 26.8
+  },
+  "baseline": {
+   "faithfulness": 0.956,
+   "citation_correctness": 0.953,
+   "answer_coverage": 0.842,
+   "latency_s": 8.7
+  }
+ },
+ "per_question": [
+  {
+   "question": "P-101 keeps tripping on high temperature - what feeds it, has this happened before, and what does the manual say to check?",
+   "category": "multi_modal_fusion",
+   "smriti": {
+    "faithfulness": 0.9,
+    "citation_correctness": 0.85,
+    "answer_coverage": 0.75,
+    "latency_s": 54.6,
+    "modalities": [
+     "graph",
+     "text",
+     "visual"
+    ],
+    "notes": "Answer accurately covers trip history, E-201/STR-101 root cause, and OEM section 7.3 checks with mostly correct citations, but invents an unsupported CW-STR-101-E-201 feed-chain order and omits CT-101 as the cooling water source from the expected answer."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.6,
+    "latency_s": 11.6,
+    "notes": "Answer omits the CT-101\u2192STR-101\u2192P-101 feed chain entirely and doesn't call out STR-101 blinding as a contributing root cause, but otherwise covers the trip history and manual checks accurately with correct citations."
+   }
+  },
+  {
+   "question": "Why does P-101 keep failing?",
+   "category": "rca",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 19.6,
+    "modalities": [
+     "text",
+     "graph"
+    ],
+    "notes": "All claims are well-supported by cited evidence, citations accurately map to supporting blocks, and all four expected points (monsoon recurrence pattern, causal chain, sister pump P-103/P-107 correlation, SOP-CW-012 mitigation) are covered."
+   },
+   "baseline": {
+    "faithfulness": 0.95,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.9,
+    "latency_s": 10.4,
+    "notes": "Answer accurately reflects the evidence's causal chain, dates, unimplemented 2021 fix, SOP-CW-012 mitigation, and sister-pump risk, with correctly matched citations; it omits the 2024 failure event mentioned in the expected points, but that year isn't present in the retrieved evidence."
+   }
+  },
+  {
+   "question": "Prepare us for an OISD audit on the fuel storage area.",
+   "category": "compliance",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.75,
+    "latency_s": 39.8,
+    "modalities": [
+     "text",
+     "graph",
+     "visual"
+    ],
+    "notes": "Answer is fully grounded in cited evidence and citations are accurate, but omits the expected point about PSV-3101 and fire water weekly compliant test evidence (which isn't present in the shown evidence set anyway)."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.75,
+    "latency_s": 14.0,
+    "notes": "Answer covers drill, T-301, and PSV-1101 overdue points accurately and cites correctly, but omits PSV-3101/fire-water compliant evidence (not present in retrieved evidence anyway)."
+   }
+  },
+  {
+   "question": "What is the current procedure for P-101 / P-102 changeover and what changed in the latest revision?",
+   "category": "temporal",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 20.7,
+    "modalities": [
+     "text"
+    ],
+    "notes": "All claims and citations are directly supported by the evidence, and all three expected points are covered accurately."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 10.0,
+    "notes": "All claims trace directly to cited evidence blocks, citations are accurate, and all three expected points (current rev3, monsoon flush addition, rev2 STR-101 dP origin) are covered."
+   }
+  },
+  {
+   "question": "What feeds into pump P-101?",
+   "category": "graph_lookup",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 26.5,
+    "modalities": [
+     "graph"
+    ],
+    "notes": "All claims (flow path, CT-101 sources, downstream routing, STR-101 dP risk history) are directly supported by cited evidence blocks, and both expected points (STR-101 immediately upstream, CT-101 further upstream) are covered."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 7.7,
+    "notes": "Answer correctly identifies CT-101 basin and STR-101 strainer as feeding P-101, both fully supported and correctly cited."
+   }
+  },
+  {
+   "question": "Is there any risk with the confined space entry planned for TK-401 tomorrow?",
+   "category": "proactive",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 52.6,
+    "modalities": [
+     "text",
+     "graph"
+    ],
+    "notes": "All claims are directly supported by cited evidence and all three expected points (2h vs 4h purge gap, matching precursor pattern in both near-misses, sludge disturbance re-releasing H2S post-passing test) are explicitly covered."
+   },
+   "baseline": {
+    "faithfulness": 0.85,
+    "citation_correctness": 0.8,
+    "answer_coverage": 0.83,
+    "latency_s": 12.4,
+    "notes": "Answer is largely accurate but contains a self-contradictory claim that 2019/2022 purges were 'well over 4h' when the cited evidence (and the answer's own parenthetical) shows they were only ~2h15m/2h50m, and it doesn't clearly establish that NM-2022-31 shares the same precursor signature as NM-2019-07."
+   }
+  },
+  {
+   "question": "What is the seal model used on P-101?",
+   "category": "factual",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 12.8,
+    "modalities": [
+     "text"
+    ],
+    "notes": "Both claims (seal model, and shared use on P-103) are directly supported by cited evidence blocks."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 4.3,
+    "notes": "Answer correctly identifies BurgFlow MS-40D cartridge seal, fully supported and cited by c1-c3."
+   }
+  },
+  {
+   "question": "When was PSV-1101 last bench tested and what was the result?",
+   "category": "factual",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 14.9,
+    "modalities": [
+     "text"
+    ],
+    "notes": "All claims (test date, result, overdue status, audit note) are accurately supported by the cited evidence blocks."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 6.1,
+    "notes": "All claims are supported by cited evidence and both expected points (date and pass/recertified result) are covered, with the overdue-status note also accurate per c3 though uncited."
+   }
+  },
+  {
+   "question": "What is the trip setpoint context for TI-1103 on P-101?",
+   "category": "factual",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 23.1,
+    "modalities": [
+     "text"
+    ],
+    "notes": "All claims (65\u00b0C trip, 68\u00b0C reading, repeat trip, E-201 fouling, drawing location, survey history) are directly supported by cited evidence blocks."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 8.4,
+    "notes": "All claims (65\u00b0C setpoint, 68\u00b0C reading, recurrence, fouling cause) are directly supported by cited evidence and match expected points."
+   }
+  },
+  {
+   "question": "Which drawing shows the cooling water system and what revision is current?",
+   "category": "factual",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 21.4,
+    "modalities": [
+     "visual",
+     "text"
+    ],
+    "notes": "All claims (drawing ID, rev, components, and the caveat about 'current' not being explicit) are supported by c1/c2, correctly cited, and fully cover the expected point D-CW-104 rev 3."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 7.0,
+    "notes": "Answer correctly identifies D-CW-104 rev 3, fully supported by c1 and matching the expected point."
+   }
+  },
+  {
+   "question": "Who authored the analysis connecting monsoon turbidity to seal failures?",
+   "category": "factual",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.8,
+    "latency_s": 24.6,
+    "modalities": [
+     "text",
+     "graph"
+    ],
+    "notes": "All claims and citations are well-supported by the evidence; only the expected 'senior reliability engineer' title is omitted, likely because it isn't stated anywhere in the retrieved evidence."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 8.4,
+    "notes": "All claims (authorship, root-cause chain, 1990s prior pattern) are directly supported by c1 and c2, and the answer correctly identifies R. K. Sharma as expected."
+   }
+  },
+  {
+   "question": "What are the gas test acceptance limits for TK-401 entry?",
+   "category": "factual",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 24.1,
+    "modalities": [
+     "text"
+    ],
+    "notes": "All claims (limits, retest interval, regulatory basis, near-miss caution) are accurately supported by cited evidence and cover all expected points."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.75,
+    "latency_s": 10.9,
+    "notes": "Answer covers O2, LEL, and 30-min repeat-test points accurately with correct citations but omits the H2S <10 ppm acceptance threshold."
+   }
+  },
+  {
+   "question": "What does the Rotork manual suggest for MOV-110's intermittent torque alarm?",
+   "category": "factual",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 31.4,
+    "modalities": [
+     "text",
+     "visual"
+    ],
+    "notes": "All claims (manual causes, log retrieval, service recommendation, SOP shutdown-only full stroke) are directly supported by cited evidence and cover all expected points."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 7.2,
+    "notes": "All claims are directly supported by c3 and c1 with correct citations, and the answer covers all expected points."
+   }
+  },
+  {
+   "question": "What is the minimum fire water header pressure target in the weekly test?",
+   "category": "factual",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 17.5,
+    "modalities": [
+     "text"
+    ],
+    "notes": "Answer accurately reports the 8.5 kg/cm2 SOP target, contrasts it with the 7.0 kg/cm2 regulatory minimum, and cites the latest passing test, all correctly supported by cited evidence."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 4.8,
+    "notes": "Answer correctly states the 8.5 kg/cm2 SOP test target and accurately attributes the 7.0 kg/cm2 design minimum to OISD-STD-116, both fully supported by c1 and c2."
+   }
+  },
+  {
+   "question": "What else shares the cooling water loop that feeds P-101?",
+   "category": "multi_hop",
+   "smriti": {
+    "faithfulness": 0.9,
+    "citation_correctness": 0.95,
+    "answer_coverage": 1.0,
+    "latency_s": 26.3,
+    "modalities": [
+     "graph"
+    ],
+    "notes": "Nearly all claims trace to evidence (P-102 'shared suction' is a plausible but slightly unstated inference from duty/standby wording), citations are appropriately matched, and all three expected points (P-102 standby, E-201/E-202, P-103 downstream) are covered."
+   },
+   "baseline": {
+    "faithfulness": 0.8,
+    "citation_correctness": 0.75,
+    "answer_coverage": 1.0,
+    "latency_s": 15.3,
+    "notes": "Core drawing-based claims are well supported, but the answer overreaches by asserting P-107 is fed from the same cooling water source and shares the failure chain, which c4 does not state."
+   }
+  },
+  {
+   "question": "Which equipment items use the BurgFlow MS-40D seal and which of them have failed?",
+   "category": "multi_hop",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.7,
+    "latency_s": 25.5,
+    "modalities": [
+     "text",
+     "graph"
+    ],
+    "notes": "Answer correctly covers P-101/P-103/P-107 usage and failures with accurate citations, but omits P-102 as a pump using the MS-40D seal."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.75,
+    "latency_s": 8.5,
+    "notes": "Answer correctly identifies P-101/P-103/P-107 as users and failures with accurate citations, but omits P-102 as a user of the seal."
+   }
+  },
+  {
+   "question": "If STR-101 blinds, which downstream equipment is at risk and why?",
+   "category": "multi_hop",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.25,
+    "latency_s": 32.9,
+    "modalities": [
+     "graph"
+    ],
+    "notes": "Answer covers P-101 cavitation/seal damage thoroughly but never flags P-102 as directly at risk and omits the E-201 discharge-temperature/downstream equipment point entirely (not in retrieved evidence)."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.3,
+    "latency_s": 12.5,
+    "notes": "Answer correctly identifies P-101 seal damage from strainer blinding using well-supported evidence but omits P-102, cavitation, and the E-201 discharge-temperature mechanism from the expected answer."
+   }
+  },
+  {
+   "question": "Trace the path of cooling water from the tower to Area 2.",
+   "category": "multi_hop",
+   "smriti": {
+    "faithfulness": 0.75,
+    "citation_correctness": 0.9,
+    "answer_coverage": 0.5,
+    "latency_s": 29.6,
+    "modalities": [
+     "graph",
+     "visual"
+    ],
+    "notes": "Equipment list and Area-1 scoping are well-supported by c1/c2, but the answer asserts a specific flow order not explicitly stated in the evidence (which only lists equipment, not sequence), and its ordering conflicts with the expected path by placing MOV-110 last instead of between P-101 and E-201."
+   },
+   "baseline": {
+    "faithfulness": 0.9,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.3,
+    "latency_s": 10.0,
+    "notes": "Answer correctly lists Area-1 components from c1 and appropriately admits missing Area 2 tie-in, but misorders the path (P-103/MOV-110 placement) and never reaches the Area 2 header as expected."
+   }
+  },
+  {
+   "question": "What consequential damage followed the 2023 P-101 seal failure?",
+   "category": "multi_hop",
+   "smriti": {
+    "faithfulness": 0.95,
+    "citation_correctness": 0.83,
+    "answer_coverage": 1.0,
+    "latency_s": 20.8,
+    "modalities": [
+     "text",
+     "graph"
+    ],
+    "notes": "Core INC-2023-08 claims are all well-supported by c1, but the closing sentence cites [c3][c5] for a 2024/2025 pattern extension that those specific blocks don't mention (only c2/c6/c7 do)."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 5.0,
+    "notes": "Answer correctly and fully captures the DE bearing distress/replacement consequential damage, accurately cited to c1."
+   }
+  },
+  {
+   "question": "Is the P-101 seal problem seasonal? Show the evidence.",
+   "category": "rca",
+   "smriti": {
+    "faithfulness": 0.93,
+    "citation_correctness": 0.97,
+    "answer_coverage": 0.75,
+    "latency_s": 25.4,
+    "modalities": [
+     "text"
+    ],
+    "notes": "Answer is well-grounded and correctly cited except for a slightly unsupported causal inference (2021 fix delay 'likely contributed' to 2023 repeat), and covers seasonality/dP evidence conceptually but doesn't state the explicit June-September range or 'only in monsoon' framing for dP."
+   },
+   "baseline": {
+    "faithfulness": 0.95,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.6,
+    "latency_s": 9.8,
+    "notes": "Answer's claims and citations are well-supported by evidence, but it only shows one STR-101 dP data point rather than establishing the general pattern that dP is elevated exclusively in monsoon months."
+   }
+  },
+  {
+   "question": "Do P-103 or P-107 show the same failure pattern as P-101?",
+   "category": "rca",
+   "smriti": {
+    "faithfulness": 0.95,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.5,
+    "latency_s": 25.0,
+    "modalities": [
+     "graph",
+     "text"
+    ],
+    "notes": "Answer correctly confirms P-103's two wet-season failures and shared seal model with solid citations, but incorrectly claims no failure evidence exists for P-107, missing the expected Sep 2023 P-107 failure."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.5,
+    "latency_s": 9.1,
+    "notes": "P-103 pattern match is fully covered with correct citations, but the answer misses P-107's actual Sep 2023 failure since no P-107 work order was present in the retrieved evidence."
+   }
+  },
+  {
+   "question": "What has actually reduced the impact of P-101 seal failures?",
+   "category": "rca",
+   "smriti": {
+    "faithfulness": 0.95,
+    "citation_correctness": 0.95,
+    "answer_coverage": 1.0,
+    "latency_s": 33.1,
+    "modalities": [
+     "text",
+     "graph"
+    ],
+    "notes": "Answer's core claims and citations are well-supported by evidence, with only a slightly loose link between the 2021 unimplemented strainer fix and the 2023 bearing failure (c2 attributes that to delayed changeover, not the cleaning gap), and it fully covers the expected point about SOP-CW-012 rev 3 halving downtime in 2025."
+   },
+   "baseline": {
+    "faithfulness": 0.85,
+    "citation_correctness": 0.8,
+    "answer_coverage": 1.0,
+    "latency_s": 7.8,
+    "notes": "Core claim (SOP-CW-012 rev 3 halved downtime) is well-supported by c3, but the answer's claim that it was 'implemented after the 2021 recommendation' conflates the unimplemented 2021 doubled-cleaning-frequency proposal with the actual 2023 SOP-CW-012 proposal in c2."
+   }
+  },
+  {
+   "question": "What recurring causes appear across TK-401 confined space near-misses?",
+   "category": "rca",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 34.2,
+    "modalities": [
+     "graph"
+    ],
+    "notes": "All claims are directly supported by the cited evidence and all three expected points (purge shortfall, monsoon sludge load, sludge-disturbance re-release) are covered, with citations accurately matching their sentences."
+   },
+   "baseline": {
+    "faithfulness": 0.9,
+    "citation_correctness": 0.85,
+    "answer_coverage": 1.0,
+    "latency_s": 11.0,
+    "notes": "Nearly all claims are well-supported, but attributing 'passed entry gas test' to both [c1][c2] overreaches since c1 never explicitly states the entry gas test passed."
+   }
+  },
+  {
+   "question": "Which relief valves are overdue for testing?",
+   "category": "compliance",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 25.4,
+    "modalities": [
+     "text"
+    ],
+    "notes": "All claims are supported by cited evidence and both expected points (PSV-1101 overdue, PSV-3101 in date) are covered accurately."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 13.1,
+    "notes": "All claims (dates, deferral status, test results) are directly supported by cited evidence, and both expected points (PSV-1101 overdue, PSV-3101 in date) are covered."
+   }
+  },
+  {
+   "question": "When is T-301 due for its next external inspection?",
+   "category": "compliance",
+   "smriti": {
+    "faithfulness": 0.75,
+    "citation_correctness": 0.67,
+    "answer_coverage": 0.5,
+    "latency_s": 25.8,
+    "modalities": [
+     "text"
+    ],
+    "notes": "The answer misses the core conflict between OISD-129's annual inspection requirement (c4) and the plant's 5-year interval, incorrectly claiming they are 'consistent' when c4 actually contradicts the 5-year assumption."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.5,
+    "latency_s": 8.2,
+    "notes": "Answer correctly reports the plant's assumed 5-year interval per c1/c2 but omits the critical discrepancy that OISD-STD-129 clause 11.1 actually requires annual external visual inspection, meaning T-301 is already overdue."
+   }
+  },
+  {
+   "question": "Are fire drills for the tank farm up to date?",
+   "category": "compliance",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 22.0,
+    "modalities": [
+     "text"
+    ],
+    "notes": "All claims are directly supported by evidence and citations correctly map to their sentences, fully covering the expected answer point."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 8.2,
+    "notes": "All claims are directly supported by c1/c2 and both citations correctly back their sentences, fully covering the expected point."
+   }
+  },
+  {
+   "question": "What did rev 2 of SOP-CW-012 add and why?",
+   "category": "temporal",
+   "smriti": {
+    "faithfulness": 0.8,
+    "citation_correctness": 0.75,
+    "answer_coverage": 1.0,
+    "latency_s": 23.6,
+    "modalities": [
+     "text"
+    ],
+    "notes": "The answer adds an unsupported inference that cavitation was identified as the seal failure's cause, which the evidence never states."
+   },
+   "baseline": {
+    "faithfulness": 0.6,
+    "citation_correctness": 0.75,
+    "answer_coverage": 1.0,
+    "latency_s": 7.0,
+    "notes": "Core rev-2 facts (dP check, logging, WO-2021-0843) are well supported by c1, but the added claim that cavitation from a blinded strainer caused the failure and that this is 'consistent with' A. Deshpande's 2023 email is an unsupported inference c4 doesn't state cavitation or strainer causation."
+   }
+  },
+  {
+   "question": "Which procedure governs hot work and what changed after the 2020 T-302 fire?",
+   "category": "temporal",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 53.8,
+    "modalities": [
+     "text",
+     "graph"
+    ],
+    "notes": "All claims are directly supported by the cited evidence blocks and citations are accurately matched to content."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 8.5,
+    "notes": "All claims are directly supported by c1/c3 and correctly cited, and the answer covers both expected points (procedure identity and the two post-fire changes)."
+   }
+  },
+  {
+   "question": "Show me where PSV-1101 is on the cooling water drawing.",
+   "category": "visual",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 22.3,
+    "modalities": [
+     "visual"
+    ],
+    "notes": "Answer correctly locates PSV-1101 on D-CW-104 at the P-101 discharge relief per c1/c2/c3, matching the expected point."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 0.5,
+    "answer_coverage": 1.0,
+    "latency_s": 6.1,
+    "notes": "The discharge-position claim is attributed to [c1], which only lists components with no positional/layout detail; that claim is actually supported by [c4]'s 'P-101 discharge relief' phrasing instead."
+   }
+  },
+  {
+   "question": "Which instrument measures P-101 discharge temperature and where is it?",
+   "category": "visual",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.0,
+    "latency_s": 23.6,
+    "modalities": [
+     "text",
+     "visual"
+    ],
+    "notes": "All factual claims about TI-1103's trip function and values are correctly cited to c1/c2, but the answer omits the expected specific location (discharge run near MOV-110/E-201 on D-CW-104) and instead states insufficient evidence."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.5,
+    "latency_s": 5.0,
+    "notes": "Correctly identifies TI-1103 and trip setpoint with valid citations but omits the physical location (discharge run near MOV-110/E-201 on D-CW-104)."
+   }
+  },
+  {
+   "question": "Find the OEM page about cartridge seal installation torque values.",
+   "category": "visual",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 22.4,
+    "modalities": [
+     "visual",
+     "text"
+    ],
+    "notes": "All claims (25 Nm gland bolts, 12 Nm shaft rotation limit, clip sequencing) are directly supported by c1/c2 and correctly cited."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 5.4,
+    "notes": "Both torque values are directly and correctly sourced from c1, matching the expected gland bolt torque point."
+   }
+  },
+  {
+   "question": "What is the vibration alarm setpoint for compressor K-501?",
+   "category": "insufficient_evidence",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 13.8,
+    "modalities": [
+     "text"
+    ],
+    "notes": "Answer correctly states no K-501 evidence exists, accurately describes the unrelated P-102 evidence with correct citations, and admits insufficient evidence to answer."
+   },
+   "baseline": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 7.8,
+    "notes": "Answer correctly identifies no K-501 evidence exists and accurately describes the retrieved evidence as covering only MOV-110 and P-102."
+   }
+  },
+  {
+   "question": "What chemical is dosed at CT-101 and at what rate?",
+   "category": "partial_evidence",
+   "smriti": {
+    "faithfulness": 1.0,
+    "citation_correctness": 1.0,
+    "answer_coverage": 1.0,
+    "latency_s": 15.4,
+    "modalities": [
+     "text"
+    ],
+    "notes": "Answer correctly admits the chemical name and rate are absent from evidence while accurately citing biocide/dispersant mentions and pump-OK findings."
+   },
+   "baseline": {
+    "faithfulness": 0.75,
+    "citation_correctness": 1.0,
+    "answer_coverage": 0.5,
+    "latency_s": 6.0,
+    "notes": "Answer correctly flags missing dosing rate but inaccurately claims no chemical is named when evidence explicitly identifies biocide dosing, and omits the dispersant point entirely."
+   }
+  }
+ ]
+}

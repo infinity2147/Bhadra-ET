@@ -1,0 +1,156 @@
+[
+ {
+  "tag": "P-101",
+  "type": "centrifugal_pump",
+  "service": "Cooling water supply A",
+  "manufacturer": "BurgFlow",
+  "model": "MS-40D",
+  "install_date": "1998-11-02",
+  "area": "Area 1",
+  "criticality": "high",
+  "seal_model": "BurgFlow MS-40D cartridge seal"
+ },
+ {
+  "tag": "P-102",
+  "type": "centrifugal_pump",
+  "service": "Cooling water supply B (standby)",
+  "manufacturer": "BurgFlow",
+  "model": "MS-40D",
+  "install_date": "1998-11-02",
+  "area": "Area 1",
+  "criticality": "high",
+  "seal_model": "BurgFlow MS-40D cartridge seal"
+ },
+ {
+  "tag": "P-103",
+  "type": "centrifugal_pump",
+  "service": "Cooling water booster to Area 2",
+  "manufacturer": "BurgFlow",
+  "model": "MS-32C",
+  "install_date": "2004-03-15",
+  "area": "Area 1",
+  "criticality": "medium",
+  "seal_model": "BurgFlow MS-40D cartridge seal"
+ },
+ {
+  "tag": "P-107",
+  "type": "centrifugal_pump",
+  "service": "Effluent transfer",
+  "manufacturer": "BurgFlow",
+  "model": "MS-32C",
+  "install_date": "2009-06-20",
+  "area": "Area 4",
+  "criticality": "medium",
+  "seal_model": "BurgFlow MS-40D cartridge seal"
+ },
+ {
+  "tag": "E-201",
+  "type": "shell_tube_exchanger",
+  "service": "CW / crude interchanger",
+  "manufacturer": "Thermax",
+  "model": "ST-800",
+  "install_date": "1998-11-02",
+  "area": "Area 1",
+  "criticality": "high"
+ },
+ {
+  "tag": "E-202",
+  "type": "shell_tube_exchanger",
+  "service": "Trim cooler",
+  "manufacturer": "Thermax",
+  "model": "ST-400",
+  "install_date": "2011-01-12",
+  "area": "Area 1",
+  "criticality": "medium"
+ },
+ {
+  "tag": "T-301",
+  "type": "storage_tank",
+  "service": "HSD (diesel) storage",
+  "manufacturer": "site-built",
+  "model": "fixed roof 5000 m3",
+  "install_date": "1999-05-30",
+  "area": "Area 3",
+  "criticality": "high"
+ },
+ {
+  "tag": "T-302",
+  "type": "storage_tank",
+  "service": "Naphtha storage",
+  "manufacturer": "site-built",
+  "model": "fixed roof 3000 m3",
+  "install_date": "1999-05-30",
+  "area": "Area 3",
+  "criticality": "high"
+ },
+ {
+  "tag": "PSV-1101",
+  "type": "pressure_safety_valve",
+  "service": "P-101 discharge header relief",
+  "manufacturer": "Sarasin",
+  "model": "RSBD-2",
+  "install_date": "1998-11-02",
+  "area": "Area 1",
+  "criticality": "high"
+ },
+ {
+  "tag": "PSV-3101",
+  "type": "pressure_safety_valve",
+  "service": "T-301 breather relief",
+  "manufacturer": "Sarasin",
+  "model": "RSBD-1",
+  "install_date": "1999-05-30",
+  "area": "Area 3",
+  "criticality": "high"
+ },
+ {
+  "tag": "CT-101",
+  "type": "cooling_tower",
+  "service": "CW return / evaporative cooling",
+  "manufacturer": "Paharpur",
+  "model": "CF-3200",
+  "install_date": "1998-11-02",
+  "area": "Area 1",
+  "criticality": "high"
+ },
+ {
+  "tag": "STR-101",
+  "type": "strainer",
+  "service": "P-101/P-102 common suction strainer",
+  "manufacturer": "Filtrex",
+  "model": "basket DN300",
+  "install_date": "1998-11-02",
+  "area": "Area 1",
+  "criticality": "medium"
+ },
+ {
+  "tag": "TK-401",
+  "type": "equalization_tank",
+  "service": "Effluent equalization (CONFINED SPACE)",
+  "manufacturer": "site-built",
+  "model": "620 m3",
+  "install_date": "2009-06-20",
+  "area": "Area 4",
+  "criticality": "medium"
+ },
+ {
+  "tag": "V-205",
+  "type": "knock_out_drum",
+  "service": "Area 2 fuel gas KO drum",
+  "manufacturer": "L&T",
+  "model": "KOD-1200",
+  "install_date": "2001-08-14",
+  "area": "Area 2",
+  "criticality": "medium"
+ },
+ {
+  "tag": "MOV-110",
+  "type": "motor_operated_valve",
+  "service": "CW header isolation",
+  "manufacturer": "Rotork",
+  "model": "IQ3",
+  "install_date": "2015-02-10",
+  "area": "Area 1",
+  "criticality": "medium"
+ }
+]

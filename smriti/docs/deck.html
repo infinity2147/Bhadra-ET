@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SMRITI — Presentation Deck</title>
+<style>
+  :root {
+    --bg: #12120f; --surface: #1a1a19; --line: #34342f;
+    --ink: #f2f1ea; --ink2: #c3c2b7; --ink3: #8a897f;
+    --blue: #3987e5; --aqua: #199e70; --warn: #fab219; --crit: #d03b3b;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink);
+         font: 18px/1.55 -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .slide {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; padding: 7vh 9vw; border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .kicker { color: var(--blue); font-size: 14px; letter-spacing: 3px;
+            text-transform: uppercase; font-weight: 700; margin-bottom: 14px; }
+  h1 { font-size: clamp(34px, 6vw, 64px); line-height: 1.1; font-weight: 800; }
+  h2 { font-size: clamp(26px, 4vw, 42px); line-height: 1.15; margin-bottom: 22px; }
+  h3 { font-size: 20px; margin: 18px 0 8px; }
+  p.lead { font-size: clamp(18px, 2.2vw, 24px); color: var(--ink2); margin-top: 18px;
+           max-width: 46ch; }
+  .num { position: absolute; top: 24px; right: 32px; color: var(--ink3); font-size: 13px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+           gap: 14px; margin-top: 24px; }
+  .card { background: var(--surface); border: 1px solid var(--line);
+          border-radius: 14px; padding: 18px 20px; }
+  .card b { color: #fff; }
+  .card .big { font-size: 34px; font-weight: 800; }
+  .card small { color: var(--ink3); }
+  .blue { color: var(--blue); } .aqua { color: var(--aqua); }
+  .warn { color: var(--warn); } .crit { color: var(--crit); }
+  ul { margin: 10px 0 0 20px; color: var(--ink2); }
+  li { margin: 7px 0; }
+  li b { color: var(--ink); }
+  pre.arch { background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+       padding: 20px; font-size: clamp(9px, 1.35vw, 14.5px); line-height: 1.45;
+       color: var(--ink2); overflow-x: auto; }
+  pre.arch b { color: var(--blue); }
+  .quote { border-left: 4px solid var(--blue); padding-left: 20px; font-size: 22px;
+           font-style: italic; color: var(--ink2); max-width: 60ch; }
+  .footer-hint { position: fixed; bottom: 14px; right: 18px; color: var(--ink3);
+                 font-size: 12px; background: var(--surface); padding: 4px 12px;
+                 border-radius: 99px; border: 1px solid var(--line); z-index: 5; }
+  td, th { padding: 8px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+  th { color: var(--ink3); font-size: 14px; }
+  table { border-collapse: collapse; margin-top: 16px; width: 100%; max-width: 900px; }
+</style>
+</head>
+<body>
+
+<section class="slide">
+  <div class="kicker">ET AI Hackathon 2026 · Problem Statement 8</div>
+  <h1>SMRITI <span style="color:var(--ink3); font-weight:400">स्मृति · "memory"</span></h1>
+  <p class="lead">The living brain of an industrial plant — every drawing, work order,
+  procedure, inspection and near-miss fused into one graph you can talk to, that shows
+  you the answer <b style="color:var(--ink)">on the drawing itself</b>, and warns you
+  <b style="color:var(--ink)">before the failure repeats</b>.</p>
+  <p style="margin-top:26px; color:var(--ink3)">Working prototype · tri-modal retrieval fabric · five agents · measured evals</p>
+</section>
+
+<section class="slide"><div class="num">2</div>
+  <div class="kicker">The problem is expensive and compounding</div>
+  <h2>Knowledge fragmentation is a safety problem wearing a filing problem's clothes</h2>
+  <div class="cards">
+    <div class="card"><div class="big warn">35%</div>of professionals' hours lost
+      searching, clarifying, recreating documents that already exist <small>(McKinsey 2024)</small></div>
+    <div class="card"><div class="big warn">7–12</div>disconnected document systems in
+      the average large Indian plant <small>(NASSCOM-EY)</small></div>
+    <div class="card"><div class="big crit">18–22%</div>of unplanned downtime traced to
+      decisions made without complete equipment history <small>(BIS Research)</small></div>
+    <div class="card"><div class="big crit">25%</div>of India's experienced industrial
+      engineers retire within a decade — their know-how is undocumented</div>
+  </div>
+</section>
+
+<section class="slide"><div class="num">3</div>
+  <div class="kicker">The market just told us this matters</div>
+  <h2>Validated at <span class="blue">$3.1 billion</span> — last month</h2>
+  <p class="lead">Schneider Electric / AVEVA acquired Cognite (June 2026) on exactly this
+  thesis: industrial AI needs a unified, contextualized data foundation — not more models.</p>
+  <ul style="font-size:19px">
+    <li>But the incumbents (Cognite, Siemens Industrial Copilot, SymphonyAI IRIS) are
+        <b>heavyweight, Western, enterprise-priced, 9–12-month rollouts</b>.</li>
+    <li>Drawing-lookup tools (PNID.IO, DiagramIQ) answer connectivity — <b>and only connectivity</b>.</li>
+    <li>We built the sharper slice in 15 days — and we can <b>prove</b> it works.</li>
+  </ul>
+</section>
+
+<section class="slide"><div class="num">4</div>
+  <div class="kicker">What we built</div>
+  <h2>One fabric, three retrieval modalities, five agents</h2>
+<pre class="arch">
+ PRESENTATION   mobile-first PWA · streaming chat · <b>Drawing Viewer with live overlays</b>
+                reasoning-trace panel · compliance / warnings / eval dashboards
+ ────────────────────────────────────────────────────────────────────────────
+ AGENTS         1 Ingestion+KG · 2 Expert Copilot · 3 Maintenance/RCA
+                4 Compliance · 5 Lessons-Learned + <b>proactive precursor monitor</b>
+ ────────────────────────────────────────────────────────────────────────────
+ RETRIEVAL      intent router ──► text: hybrid dense+BM25 (RRF)
+ FABRIC                      ──► graph: typed traversal over the IKG
+                             ──► <b>visual: ColPali late interaction — no OCR</b>
+                merge ► cross-encoder rerank ► provenance ► drawing overlays
+ ────────────────────────────────────────────────────────────────────────────
+ KNOWLEDGE      Industrial Knowledge Graph — typed ontology, <b>provenance on every
+ STORE          node & edge</b>, SUPERSEDES version chains · Qdrant multivector (MaxSim)
+                · DrawingRegion index (pixels ⇄ graph nodes)
+ ────────────────────────────────────────────────────────────────────────────
+ SOURCES        P&IDs · CMMS work orders · SOPs · inspections · incidents ·
+                scanned OEM manuals · permits · email · <b>real OISD/Factories/PESO clauses</b>
+</pre>
+</section>
+
+<section class="slide"><div class="num">5</div>
+  <div class="kicker">Why it beats a RAG chatbot — and the drawing tools</div>
+  <h2>The question that separates us:</h2>
+  <div class="quote">"P-101 keeps tripping on high temperature — what feeds it, has this
+  happened before, and what does the manual say to check?"</div>
+  <ul style="font-size:19px; margin-top:22px">
+    <li><b class="blue">Graph</b> traces CT-101 → STR-101 → P-101 and lights the feed path
+        on drawing D-CW-104</li>
+    <li><b class="blue">Text</b> finds both monsoon-2025 trip work orders — root cause: fouled cooler</li>
+    <li><b class="blue">Visual</b> retrieves the <b>scanned, skewed, stamped</b> OEM
+        troubleshooting page by appearance — no OCR ever ran</li>
+    <li>One streamed answer, every sentence cited, confidence scored, source pages one tap away</li>
+  </ul>
+  <p style="margin-top:18px; color:var(--ink3)">A connectivity-only P&amp;ID tool cannot answer this. A text-RAG cannot show it. The fusion is the product.</p>
+</section>
+
+<section class="slide"><div class="num">6</div>
+  <div class="kicker">The anti-knowledge-cliff engine</div>
+  <h2>It connects dots no individual can — then acts <i>before</i> the repeat</h2>
+  <div class="cards">
+    <div class="card"><h3 class="blue">RCA across the fleet</h3>
+      Five monsoon seal failures on P-101 (2019→2025) + the retiring engineer's analysis
+      + strainer ΔP inspections → causal chain, and the callout:
+      <b>"same pattern on P-103 and P-107 — recommend fleet-wide seal review."</b></div>
+    <div class="card"><h3 class="warn">Foresight, not hindsight</h3>
+      Tomorrow's TK-401 confined-space permit plans a 2-hour purge. SMRITI matches it
+      against near-misses NM-2019-07 / NM-2022-31 (same tank, monsoon, short purge, H2S
+      re-release) and <b>pushes the warning before the crew enters.</b></div>
+    <div class="card"><h3 class="aqua">India-first compliance</h3>
+      18 real clauses — OISD-116/129/132/105, Factories Act §§31–40, SMPV(U) 2016,
+      Petroleum Rules 2002 — mapped to equipment, evaluated against actual records,
+      one-click audit evidence pack. It even catches the plant's own inspection plan
+      contradicting OISD-129's annual requirement.</div>
+  </div>
+</section>
+
+<section class="slide"><div class="num">7</div>
+  <div class="kicker">Technical excellence — engineering maturity most demos skip</div>
+  <h2>We measure it, live</h2>
+  <ul style="font-size:19px">
+    <li><b>Golden set</b>: 33 domain-expert Q&amp;As — multi-hop, visual, RCA, compliance,
+        temporal, and honest out-of-corpus questions</li>
+    <li><b>LLM-judged faithfulness</b> (claims ⊆ evidence), <b>citation correctness</b>
+        (does the cited page support the sentence?), <b>expected-point coverage</b></li>
+    <li><b>Baseline comparison</b>: same corpus, same answer model, vanilla single-vector
+        RAG — the delta is the fabric's contribution, shown in-app</li>
+    <li><b>"Insufficient evidence" is a first-class answer</b> — trust is a feature</li>
+    <li>Every tool call logged; provenance object on every node and edge → audit-admissible</li>
+  </ul>
+</section>
+
+<section class="slide"><div class="num">8</div>
+  <div class="kicker">Scalability &amp; honest scoping</div>
+  <h2>Hackathon scale today, production path named</h2>
+  <table>
+    <tr><th>Today (8 GB laptop, no GPU, no Docker)</th><th>Production path</th></tr>
+    <tr><td>colSmol-256M multivector, exact MaxSim</td><td>MUVERA fixed-dim encodings + int8; larger ColQwen tier on GPU</td></tr>
+    <tr><td>NetworkX graph, typed-ontology contracts</td><td>Same contracts on Neo4j/Memgraph; LazyGraphRAG incremental indexing</td></tr>
+    <tr><td>Hero P&amp;IDs: digitizer-contract ground truth</td><td>YOLO symbol detection → tag association → line tracing (PID2Graph-trained)</td></tr>
+    <tr><td>Claude via subscription CLI</td><td>API with prompt caching; RBAC on the audit-logged tool bus</td></tr>
+  </table>
+  <p style="margin-top:16px;color:var(--ink3)">Every scoping decision is documented with evidence in docs/decisions.md — judges reward scoping, not fakery.</p>
+</section>
+
+<section class="slide"><div class="num">9</div>
+  <div class="kicker">Business impact</div>
+  <h2>Where the money is</h2>
+  <div class="cards">
+    <div class="card"><div class="big blue">minutes</div>vs 40-minute searches — attacks
+      the 35% lost-hours figure directly, on a phone in the field</div>
+    <div class="card"><div class="big blue">↓ downtime</div>fragmentation-driven failures
+      (18–22% of unplanned downtime) get RCA'd once, fleet-wide, and prevented</div>
+    <div class="card"><div class="big blue">days → clicks</div>audit prep: clause-by-clause
+      evidence pack generated on demand from live records</div>
+    <div class="card"><div class="big blue">retained</div>the retiring engineer's causal
+      knowledge is now a graph edge, not a memory — institutional memory that never retires</div>
+  </div>
+</section>
+
+<section class="slide"><div class="num">10</div>
+  <div class="kicker">Close</div>
+  <h1 style="font-size:clamp(28px,4.6vw,52px)">We didn't build a search box.<br>
+  We built the plant's institutional memory —<br>
+  <span class="blue">one that never retires.</span></h1>
+  <p class="lead" style="margin-top:28px">SMRITI · working prototype · live demo follows</p>
+</section>
+
+<div class="footer-hint">scroll / ↓ to advance</div>
+<script>
+  document.addEventListener("keydown", e => {
+    const slides = [...document.querySelectorAll(".slide")];
+    const y = window.scrollY + 10;
+    const idx = slides.findIndex(s => s.offsetTop + s.offsetHeight > y);
+    if (["ArrowDown", "PageDown", " "].includes(e.key) && idx < slides.length - 1) {
+      e.preventDefault(); slides[idx + 1].scrollIntoView({ behavior: "smooth" });
+    } else if (["ArrowUp", "PageUp"].includes(e.key) && idx > 0) {
+      e.preventDefault(); slides[idx - 1].scrollIntoView({ behavior: "smooth" });
+    }
+  });
+</script>
+</body>
+</html>

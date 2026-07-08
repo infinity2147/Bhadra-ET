@@ -1,0 +1,99 @@
+[
+ {
+  "id": "EMAIL-2023-07-25-sharma",
+  "date": "2023-07-25",
+  "frm": "R. K. Sharma <rk.sharma@bharatpetrochem.example>",
+  "to": "A. Deshpande; S. Venkatesan",
+  "subject": "P-101 seal failures - it is the water, not the seals",
+  "body": [
+   "Team,",
+   "",
+   "Closing WO-2023-0771 I want this on record. We have now lost P-101 seals in Jul 2019, Aug 2021 and Jul 2023 - every one inside the monsoon window. The seal vendor is not the problem. The chain is: heavy rain washes silt into the CT-101 basin -> CW turbidity spikes -> STR-101 blinds within days -> on the next start the pump cavitates for a few seconds -> faces flash open, grit enters, seal dies weeks later.",
+   "",
+   "Ask me how I know: I saw the identical pattern at my previous refinery in the 90s. The fix there was dP-triggered strainer cleaning and a hard rule on monsoon seal flush verification. I have proposed the same for SOP-CW-012.",
+   "",
+   "P-103 and P-107 run the same MS-40D cartridge. Watch them.",
+   "",
+   "R.K.S."
+  ]
+ },
+ {
+  "id": "EMAIL-2023-07-26-deshpande",
+  "date": "2023-07-26",
+  "frm": "A. Deshpande <a.deshpande@bharatpetrochem.example>",
+  "to": "R. K. Sharma",
+  "subject": "RE: P-101 seal failures",
+  "body": [
+   "Noted. Raising the SOP revision request and adding STR-101 dP to the operator round sheet. Will include P-103/P-107 in the fleet review for the next reliability meeting."
+  ]
+ },
+ {
+  "id": "EMAIL-2025-04-16-sharma",
+  "date": "2025-04-16",
+  "frm": "R. K. Sharma <rk.sharma@bharatpetrochem.example>",
+  "to": "Unit 4 Operations",
+  "subject": "SOP-CW-012 rev 3 issued - monsoon mode",
+  "body": [
+   "Rev 3 is effective today. The new step 3 (weekly monsoon seal-flush verification on P-101/P-102) exists because we paid for it four times over. Please make it stick after I retire in December.",
+   "R.K.S."
+  ]
+ },
+ {
+  "id": "EMAIL-2024-11-03-kaur",
+  "date": "2024-11-03",
+  "frm": "N. Kaur <n.kaur@bharatpetrochem.example>",
+  "to": "J. Reddy",
+  "subject": "PSV-1101 test deferral - flag for compliance register",
+  "body": [
+   "Jyoti,",
+   "",
+   "PSV-1101 (P-101 discharge relief) was bench tested 2022-04-12 and fell due within the OISD-STD-132 periodicity window this year. The removal was planned with the October shutdown, which slipped to 2026. As of today the valve is PAST its test due date and I do not see a revalidation or deferral approval on file. Please carry this on the compliance register until the test is done.",
+   "",
+   "PSV-3101 was done 2025-03-06 and is fine.",
+   "N."
+  ]
+ },
+ {
+  "id": "EMAIL-2026-05-20-reddy",
+  "date": "2026-05-20",
+  "frm": "J. Reddy <j.reddy@bharatpetrochem.example>",
+  "to": "Plant Manager",
+  "subject": "Area 3 audit-readiness gaps",
+  "body": [
+   "Ahead of the expected OISD external audit: two open items on Area 3.",
+   "1. Fire/emergency drill for the tank farm - last record 2025-01-15; quarterly expectation for MAH units means we are several quarters behind.",
+   "2. T-301 external inspection falls due 2026-11-20 (five-year OISD-129 interval from 2021-11-20) - need to plan access/scaffolding now.",
+   "PSV-1101 test overdue remains open from N. Kaur's note of Nov 2024."
+  ]
+ },
+ {
+  "id": "EMAIL-2021-02-09-rfi-mov",
+  "date": "2021-02-09",
+  "frm": "S. Venkatesan <s.venkatesan@bharatpetrochem.example>",
+  "to": "Rotork service",
+  "subject": "RFI: MOV-110 torque alarm on opening stroke",
+  "body": [
+   "MOV-110 (IQ3) intermittently alarms high torque at 20% open. Partial stroke tests otherwise normal. Please advise inspection points."
+  ]
+ },
+ {
+  "id": "EMAIL-2021-02-12-rfi-reply",
+  "date": "2021-02-12",
+  "frm": "Rotork service <service@rotork.example>",
+  "to": "S. Venkatesan",
+  "subject": "RE: RFI: MOV-110 torque alarm",
+  "body": [
+   "Likely seat debris or stem lubrication. Recommend stem clean/re-grease and a full stroke at next opportunity; check disc for CW scale build-up - common on cooling water isolation duty."
+  ]
+ },
+ {
+  "id": "EMAIL-2025-06-30-spares",
+  "date": "2025-06-30",
+  "frm": "A. Deshpande <a.deshpande@bharatpetrochem.example>",
+  "to": "Stores",
+  "subject": "Min-max review: MS-40D cartridge seals",
+  "body": [
+   "Given the recurring monsoon seal consumption on P-101/P-103/P-107, raise min stock of BurgFlow MS-40D cartridges from 1 to 3 between May and October."
+  ]
+ }
+]

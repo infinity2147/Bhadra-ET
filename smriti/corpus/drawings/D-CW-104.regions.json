@@ -1,0 +1,192 @@
+{
+ "drawing_number": "D-CW-104",
+ "title": "COOLING WATER SYSTEM \u2014 AREA 1",
+ "rev": "3",
+ "image": "D-CW-104.png",
+ "width": 2400,
+ "height": 1520,
+ "regions": [
+  {
+   "tag": "CT-101",
+   "symbol_class": "cooling_tower",
+   "bbox": [
+    172,
+    196,
+    356,
+    396
+   ]
+  },
+  {
+   "tag": "STR-101",
+   "symbol_class": "strainer",
+   "bbox": [
+    562,
+    318,
+    638,
+    426
+   ]
+  },
+  {
+   "tag": "P-101",
+   "symbol_class": "centrifugal_pump",
+   "bbox": [
+    820,
+    292,
+    940,
+    456
+   ]
+  },
+  {
+   "tag": "P-102",
+   "symbol_class": "centrifugal_pump",
+   "bbox": [
+    820,
+    564,
+    940,
+    728
+   ]
+  },
+  {
+   "tag": "PSV-1101",
+   "symbol_class": "pressure_safety_valve",
+   "bbox": [
+    1138,
+    244,
+    1206,
+    364
+   ]
+  },
+  {
+   "tag": "E-201",
+   "symbol_class": "shell_tube_exchanger",
+   "bbox": [
+    1452,
+    284,
+    1588,
+    456
+   ]
+  },
+  {
+   "tag": "E-202",
+   "symbol_class": "shell_tube_exchanger",
+   "bbox": [
+    1452,
+    836,
+    1588,
+    1008
+   ]
+  },
+  {
+   "tag": "P-103",
+   "symbol_class": "centrifugal_pump",
+   "bbox": [
+    1940,
+    564,
+    2060,
+    728
+   ]
+  },
+  {
+   "tag": "PI-1101",
+   "symbol_class": "instrument",
+   "bbox": [
+    702,
+    222,
+    770,
+    290
+   ]
+  },
+  {
+   "tag": "TI-1103",
+   "symbol_class": "instrument",
+   "bbox": [
+    1246,
+    482,
+    1314,
+    550
+   ]
+  },
+  {
+   "tag": "FI-1102",
+   "symbol_class": "instrument",
+   "bbox": [
+    1056,
+    222,
+    1124,
+    290
+   ]
+  },
+  {
+   "tag": "MOV-110",
+   "symbol_class": "valve",
+   "bbox": [
+    1248,
+    356,
+    1312,
+    464
+   ]
+  }
+ ],
+ "connectivity": [
+  {
+   "src": "CT-101",
+   "dst": "STR-101",
+   "via": "CW SUPPLY HDR"
+  },
+  {
+   "src": "STR-101",
+   "dst": "P-101",
+   "via": "pipe"
+  },
+  {
+   "src": "STR-101",
+   "dst": "P-102",
+   "via": "pipe"
+  },
+  {
+   "src": "P-101",
+   "dst": "PSV-1101",
+   "via": "RELIEF"
+  },
+  {
+   "src": "P-101",
+   "dst": "MOV-110",
+   "via": "pipe"
+  },
+  {
+   "src": "MOV-110",
+   "dst": "E-201",
+   "via": "pipe"
+  },
+  {
+   "src": "P-102",
+   "dst": "E-201",
+   "via": "pipe"
+  },
+  {
+   "src": "E-201",
+   "dst": "CT-101",
+   "via": "CW RETURN"
+  },
+  {
+   "src": "E-201",
+   "dst": "P-103",
+   "via": "TAP TO A2 HDR"
+  },
+  {
+   "src": "P-103",
+   "dst": "AREA-2-HDR",
+   "via": "TO AREA 2 CRUDE PREHEAT"
+  },
+  {
+   "src": "AREA-2-RET",
+   "dst": "E-202",
+   "via": "TRIM CW FROM AREA 2"
+  },
+  {
+   "src": "E-202",
+   "dst": "CT-101",
+   "via": "TRIM RETURN"
+  }
+ ]
+}

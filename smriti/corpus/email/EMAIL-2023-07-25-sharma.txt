@@ -1,0 +1,14 @@
+From: R. K. Sharma <rk.sharma@bharatpetrochem.example>
+To: A. Deshpande; S. Venkatesan
+Date: 2023-07-25
+Subject: P-101 seal failures - it is the water, not the seals
+
+Team,
+
+Closing WO-2023-0771 I want this on record. We have now lost P-101 seals in Jul 2019, Aug 2021 and Jul 2023 - every one inside the monsoon window. The seal vendor is not the problem. The chain is: heavy rain washes silt into the CT-101 basin -> CW turbidity spikes -> STR-101 blinds within days -> on the next start the pump cavitates for a few seconds -> faces flash open, grit enters, seal dies weeks later.
+
+Ask me how I know: I saw the identical pattern at my previous refinery in the 90s. The fix there was dP-triggered strainer cleaning and a hard rule on monsoon seal flush verification. I have proposed the same for SOP-CW-012.
+
+P-103 and P-107 run the same MS-40D cartridge. Watch them.
+
+R.K.S.

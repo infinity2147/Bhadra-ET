@@ -1,0 +1,6 @@
+From: A. Deshpande <a.deshpande@bharatpetrochem.example>
+To: R. K. Sharma
+Date: 2023-07-26
+Subject: RE: P-101 seal failures
+
+Noted. Raising the SOP revision request and adding STR-101 dP to the operator round sheet. Will include P-103/P-107 in the fleet review for the next reliability meeting.

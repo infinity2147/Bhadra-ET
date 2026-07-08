@@ -1,0 +1,9 @@
+From: J. Reddy <j.reddy@bharatpetrochem.example>
+To: Plant Manager
+Date: 2026-05-20
+Subject: Area 3 audit-readiness gaps
+
+Ahead of the expected OISD external audit: two open items on Area 3.
+1. Fire/emergency drill for the tank farm - last record 2025-01-15; quarterly expectation for MAH units means we are several quarters behind.
+2. T-301 external inspection falls due 2026-11-20 (five-year OISD-129 interval from 2021-11-20) - need to plan access/scaffolding now.
+PSV-1101 test overdue remains open from N. Kaur's note of Nov 2024.

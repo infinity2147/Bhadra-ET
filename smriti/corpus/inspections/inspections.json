@@ -1,0 +1,186 @@
+[
+ {
+  "id": "INSP-STR101-2021-08-02",
+  "equipment": "STR-101",
+  "date": "2021-08-02",
+  "method": "dP gauge reading",
+  "result": "ALERT",
+  "text": "STR-101 differential pressure recorded 0.85 bar (normal < 0.3, clean ~0.1). Basket blinding consistent with monsoon CW turbidity from CT-101 basin. Cleaning recommended within 48 h."
+ },
+ {
+  "id": "INSP-STR101-2022-03-14",
+  "equipment": "STR-101",
+  "date": "2022-03-14",
+  "method": "dP gauge reading",
+  "result": "PASS",
+  "text": "STR-101 differential pressure recorded 0.15 bar (normal < 0.3, clean ~0.1). Within normal range."
+ },
+ {
+  "id": "INSP-STR101-2023-07-18",
+  "equipment": "STR-101",
+  "date": "2023-07-18",
+  "method": "dP gauge reading",
+  "result": "ALERT",
+  "text": "STR-101 differential pressure recorded 0.92 bar (normal < 0.3, clean ~0.1). Basket blinding consistent with monsoon CW turbidity from CT-101 basin. Cleaning recommended within 48 h."
+ },
+ {
+  "id": "INSP-STR101-2023-12-04",
+  "equipment": "STR-101",
+  "date": "2023-12-04",
+  "method": "dP gauge reading",
+  "result": "PASS",
+  "text": "STR-101 differential pressure recorded 0.12 bar (normal < 0.3, clean ~0.1). Within normal range."
+ },
+ {
+  "id": "INSP-STR101-2024-08-21",
+  "equipment": "STR-101",
+  "date": "2024-08-21",
+  "method": "dP gauge reading",
+  "result": "ALERT",
+  "text": "STR-101 differential pressure recorded 0.71 bar (normal < 0.3, clean ~0.1). Basket blinding consistent with monsoon CW turbidity from CT-101 basin. Cleaning recommended within 48 h."
+ },
+ {
+  "id": "INSP-STR101-2025-02-10",
+  "equipment": "STR-101",
+  "date": "2025-02-10",
+  "method": "dP gauge reading",
+  "result": "PASS",
+  "text": "STR-101 differential pressure recorded 0.14 bar (normal < 0.3, clean ~0.1). Within normal range."
+ },
+ {
+  "id": "INSP-STR101-2025-07-05",
+  "equipment": "STR-101",
+  "date": "2025-07-05",
+  "method": "dP gauge reading",
+  "result": "ALERT",
+  "text": "STR-101 differential pressure recorded 0.58 bar (normal < 0.3, clean ~0.1). Basket blinding consistent with monsoon CW turbidity from CT-101 basin. Cleaning recommended within 48 h."
+ },
+ {
+  "id": "INSP-E201-2023-08-01",
+  "equipment": "E-201",
+  "date": "2023-08-01",
+  "method": "thermal performance survey",
+  "result": "ALERT",
+  "text": "E-201 CW-side approach temperature 7.5 degC above clean baseline. Fouling significant; correlates with P-101 high-temperature trip risk on TI-1103. Backflush/chemical clean recommended."
+ },
+ {
+  "id": "INSP-E201-2024-09-05",
+  "equipment": "E-201",
+  "date": "2024-09-05",
+  "method": "thermal performance survey",
+  "result": "ALERT",
+  "text": "E-201 CW-side approach temperature 8.2 degC above clean baseline. Fouling significant; correlates with P-101 high-temperature trip risk on TI-1103. Backflush/chemical clean recommended."
+ },
+ {
+  "id": "INSP-E201-2025-07-15",
+  "equipment": "E-201",
+  "date": "2025-07-15",
+  "method": "thermal performance survey",
+  "result": "ALERT",
+  "text": "E-201 CW-side approach temperature 9.0 degC above clean baseline. Fouling significant; correlates with P-101 high-temperature trip risk on TI-1103. Backflush/chemical clean recommended."
+ },
+ {
+  "id": "INSP-E201-2025-10-01",
+  "equipment": "E-201",
+  "date": "2025-10-01",
+  "method": "thermal performance survey",
+  "result": "PASS",
+  "text": "E-201 CW-side approach temperature 2.1 degC above clean baseline. Post-cleaning performance restored."
+ },
+ {
+  "id": "INSP-T301-2021-11-20",
+  "equipment": "T-301",
+  "date": "2021-11-20",
+  "method": "external visual + UT thickness (OISD-129 schedule)",
+  "result": "PASS",
+  "text": "T-301 external inspection completed. Shell courses UT within corrosion allowance. Per OISD-STD-129 external inspection interval (5 years), next external inspection due by 2026-11-20."
+ },
+ {
+  "id": "INSP-PSV1101-2022-04-12",
+  "equipment": "PSV-1101",
+  "date": "2022-04-12",
+  "method": "bench pop test",
+  "result": "PASS",
+  "text": "PSV-1101 bench tested and recertified (see WO-2022-0410). Certificate PSV-CERT-2231. Next test due within the OISD-STD-132 periodicity for critical relief valves."
+ },
+ {
+  "id": "INSP-PSV3101-2025-03-06",
+  "equipment": "PSV-3101",
+  "date": "2025-03-06",
+  "method": "bench pop test",
+  "result": "PASS",
+  "text": "PSV-3101 bench tested and recertified (WO-2025-0301). Certificate PSV-CERT-2519. In compliance."
+ },
+ {
+  "id": "INSP-FIREDRILL-2025-01-15",
+  "equipment": "Area 3",
+  "date": "2025-01-15",
+  "method": "emergency response drill record",
+  "result": "PASS",
+  "text": "Fire and emergency drill conducted for Area 3 tank farm (T-301/T-302 scenario). Muster time 6 min. NOTE: Factories Act read with State Rules and OISD guidance expects drills at least once every calendar quarter for MAH units. No later drill record exists for Area 3 as of mid-2026."
+ },
+ {
+  "id": "INSP-FW-2026-05-11",
+  "equipment": "Area 3",
+  "date": "2026-05-11",
+  "method": "fire water pump weekly run test",
+  "result": "PASS",
+  "text": "Jockey and main fire water pumps auto-start tested per OISD-STD-116; header pressure held at 8.8 kg/cm2 at the hydraulically remotest point in Area 3 (design minimum 7.0 kg/cm2). Jockey pump J-FW-2 capacity verified at 1.2% of design fire water rate with auto cut-in at 8.2 and cut-off at 9.0 kg/cm2. Weekly test log current."
+ },
+ {
+  "id": "INSP-EARTH-2026-02-18",
+  "equipment": "T-301",
+  "date": "2026-02-18",
+  "method": "tank earthing resistance test (megger, competent person)",
+  "result": "PASS",
+  "text": "Annual earth-resistance test per Petroleum Rules 2002 Rules 127/128: T-301 measured 2.1 ohms and T-302 measured 2.4 ohms across both diametrically opposite connections (limit 7 ohms). Both tanks retain two separate and distinct earth connections. Record retained in the licensee file."
+ },
+ {
+  "id": "DOC-PESO-LICENCE-2024",
+  "equipment": "T-301",
+  "date": "2024-01-09",
+  "method": "PESO storage licence verification",
+  "result": "PASS",
+  "text": "Petroleum storage licence P/HQ/MH/15/2214(P) under Petroleum Rules 2002 Rule 116 held for the Unit 4 tank farm covering T-301 (HSD, Class B) and T-302 (naphtha, Class A); renewed 2024-01-09, valid to 2028-12-31. Licensed capacities within sanctioned limits."
+ },
+ {
+  "id": "INSP-TANKMOUNT-2025-10-12",
+  "equipment": "T-302",
+  "date": "2025-10-12",
+  "method": "post-monsoon tank mountings check (OISD-129 10.1.3)",
+  "result": "PASS",
+  "text": "Post-monsoon annual check of tank mountings for T-301 and T-302: breather valves, P&V valves and flame arrestors removed, cleaned and function-tested operable. PSV-3101 visually verified in-service. Completed within the 2025 post-monsoon window."
+ },
+ {
+  "id": "INSP-V205-HYDRO-2023-03-22",
+  "equipment": "V-205",
+  "date": "2023-03-22",
+  "method": "pressure vessel hydraulic test + internal inspection (SMPV(U) R.19)",
+  "result": "PASS",
+  "text": "V-205 KO drum hydraulically tested by competent person at the pressure marked on the vessel per SMPV(U) Rules 2016 Rule 19(1)(a); internal inspection and residual thickness measurement completed - thickness within corrosion allowance. Test certificate CP/2023/0187. Next periodic test due 2028-03-22."
+ },
+ {
+  "id": "INSP-V205-RV-2026-01-20",
+  "equipment": "V-205",
+  "date": "2026-01-20",
+  "method": "relief valve annual test by competent person (SMPV(U) R.18(2)(xiii))",
+  "result": "PASS",
+  "text": "V-205 relief valve tested for correct operation by competent person per SMPV(U) Rules 2016 Rule 18(2)(xiii); start-to-discharge within tolerance of set pressure. Certificate CP/2026/0031 issued in the prescribed proforma."
+ },
+ {
+  "id": "INSP-FWSPRAY-2026-03-02",
+  "equipment": "T-302",
+  "date": "2026-03-02",
+  "method": "fixed water spray system quarterly function test",
+  "result": "PASS",
+  "text": "Fixed water spray (deluge) system installed on T-302 (naphtha, Class A, diameter > 6 m per OISD-STD-116 cl. 4.2.1) function-tested: deluge valve opened on test signal, ring main pressure adequate, nozzles clear. Quarterly test record current."
+ },
+ {
+  "id": "DOC-PTW-TRAINING-2026",
+  "equipment": "Area 3",
+  "date": "2026-01-22",
+  "method": "work permit system training record (OISD-STD-105)",
+  "result": "PASS",
+  "text": "Annual one-day work permit system training completed 2026-01-22 for all authorized permit issuers and receivers of Unit 4 (22 personnel) per OISD-STD-105; attendance register and test scores on file. Permit register audit shows shift-wise validity and revalidation limits observed."
+ }
+]
