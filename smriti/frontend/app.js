@@ -70,6 +70,22 @@ function setBadge(id, n) {
   else { el.hidden = true; }
 }
 
+/* animated dot-matrix "thinking" symbol — cells pulse in a wave from the centre */
+function matrixHTML(cls = "", color = "") {
+  let cells = "";
+  for (let i = 0; i < 25; i++) {
+    const r = Math.floor(i / 5), c = i % 5;
+    const d = Math.hypot(r - 2, c - 2);        // ring distance from centre
+    cells += `<i style="animation-delay:${(d * 0.14).toFixed(2)}s"></i>`;
+  }
+  const style = color ? ` style="--mc:${color}"` : "";
+  return `<div class="matrix ${cls}"${style}>${cells}</div>`;
+}
+/* small inline loader for panels (RCA / compliance / warnings) */
+function loaderHTML(label, color) {
+  return `<span class="phase-inline">${matrixHTML("sm", color)}${esc(label)}</span>`;
+}
+
 /* ---------------- graph chip ---------------- */
 getJSON("/api/graph/stats").then(d => {
   const s = d.stats, ig = d.ingest;
@@ -81,6 +97,10 @@ getJSON("/api/graph/stats").then(d => {
 getJSON("/api/warnings").then(w => setBadge("warn-count", w.length)).catch(() => {});
 getJSON("/api/compliance/register").then(r =>
   setBadge("comp-count", r.filter(x => x.status === "gap").length)).catch(() => {});
+
+/* welcome hero animated mark */
+const heroMark = $("#hero-mark");
+if (heroMark) heroMark.innerHTML = matrixHTML("hero");
 
 /* ---------------- citation drawer ---------------- */
 let lastCitations = [];
@@ -132,14 +152,32 @@ async function sendAsk() {
   const id = `m${Date.now()}`;
   thread.insertAdjacentHTML("beforeend", `
     <div class="msg assistant" id="${id}">
-      <details class="trace" open><summary>reasoning trace</summary>
+      <div class="phase" id="${id}-phase">
+        ${matrixHTML()}
+        <div>
+          <div class="phase-label">Understanding your question</div>
+          <div class="phase-sub">preparing tri-modal retrieval</div>
+        </div>
+      </div>
+      <details class="trace"><summary>reasoning trace</summary>
         <div class="tsteps"></div></details>
-      <div class="bubble"><span class="thinking">thinking…</span></div>
+      <div class="bubble" hidden></div>
       <div class="extras"></div>
     </div>`);
   const msgEl = $(`#${id}`);
   const bubble = $(".bubble", msgEl);
   const tsteps = $(".tsteps", msgEl);
+  const phaseEl = $(`#${id}-phase`);
+  let bubbleShown = false;
+
+  // map a live trace event → the animated phase (label, sub, matrix colour)
+  const MC = { blue: "#2a78d6", teal: "#1baf7a", amber: "#d97706" };
+  function setPhase(label, sub, color) {
+    if (!phaseEl) return;
+    phaseEl.querySelector(".phase-label").textContent = label;
+    phaseEl.querySelector(".phase-sub").textContent = sub || "";
+    if (color) phaseEl.querySelector(".matrix").style.setProperty("--mc", color);
+  }
   thread.scrollTop = thread.scrollHeight;
 
   let acc = "";
@@ -163,26 +201,50 @@ async function sendAsk() {
       }
     }
   } catch (err) {
+    phaseEl?.remove();
+    bubble.hidden = false;
     bubble.innerHTML = `<span style="color:var(--serious-text)">connection error: ${esc(err.message)}</span>`;
   }
   $("#ask-send").disabled = false;
 
   function handleEvent(ev) {
     if (ev.type === "trace") {
-      const bits = [];
-      if (ev.step === "route") bits.push(`<b>router</b> → ${ev.modalities?.join(" + ")} · intent ${esc(ev.intent)} ${ev.tags?.length ? "· tags " + ev.tags.join(", ") : ""}`);
-      else if (ev.step === "text_search") bits.push(`<b>text</b> hybrid dense+BM25 → ${ev.hits?.map(h => h[0]).slice(0, 5).join(", ")}`);
-      else if (ev.step === "graph_traverse") bits.push(`<b>graph</b> traversed ${ev.tags?.join(", ")} → ${ev.items} evidence sets`);
-      else if (ev.step === "visual_search") bits.push(ev.error ? `<b>visual</b> unavailable` : `<b>visual</b> ColPali page match (no OCR) → ${ev.hits?.map(h => `${h[0]} p${String(h[1]).replace("p","")}`).join(", ") || "none"}`);
-      else if (ev.step === "rerank") bits.push(`<b>rerank</b> cross-encoder kept ${ev.kept?.map(k => k[0]).slice(0, 6).join(", ")}`);
-      else if (ev.step === "drawing_overlay") bits.push(`<b>overlay</b> preparing ${ev.drawings?.join(", ")}`);
-      else return;
-      tsteps.insertAdjacentHTML("beforeend", `<div class="tstep">${bits[0]}</div>`);
+      let bits = "";
+      if (ev.step === "route") {
+        const primary = ev.modalities?.[0];
+        const color = primary === "graph" ? MC.teal : primary === "visual" ? MC.amber : MC.blue;
+        setPhase(`Routing → ${ev.modalities?.join(" + ")}`,
+                 `intent: ${ev.intent}${ev.tags?.length ? " · " + ev.tags.join(", ") : ""}`, color);
+        bits = `<b>router</b> → ${ev.modalities?.join(" + ")} · intent ${esc(ev.intent)} ${ev.tags?.length ? "· tags " + ev.tags.join(", ") : ""}`;
+      } else if (ev.step === "text_search") {
+        setPhase("Searching documents", "hybrid dense + BM25", MC.blue);
+        bits = `<b>text</b> hybrid dense+BM25 → ${ev.hits?.map(h => h[0]).slice(0, 5).join(", ")}`;
+      } else if (ev.step === "graph_traverse") {
+        setPhase("Traversing knowledge graph", `${ev.tags?.join(", ")} → ${ev.items} evidence sets`, MC.teal);
+        bits = `<b>graph</b> traversed ${ev.tags?.join(", ")} → ${ev.items} evidence sets`;
+      } else if (ev.step === "visual_search") {
+        setPhase("Reading drawings", "ColPali late interaction · no OCR", MC.amber);
+        bits = ev.error ? `<b>visual</b> unavailable` : `<b>visual</b> ColPali page match (no OCR) → ${ev.hits?.map(h => `${h[0]} p${String(h[1]).replace("p","")}`).join(", ") || "none"}`;
+      } else if (ev.step === "rerank") {
+        setPhase("Ranking evidence", "cross-encoder rerank", MC.blue);
+        bits = `<b>rerank</b> cross-encoder kept ${ev.kept?.map(k => k[0]).slice(0, 6).join(", ")}`;
+      } else if (ev.step === "drawing_overlay") {
+        setPhase("Marking up the drawing", ev.drawings?.join(", "), MC.amber);
+        bits = `<b>overlay</b> preparing ${ev.drawings?.join(", ")}`;
+      } else return;
+      tsteps.insertAdjacentHTML("beforeend", `<div class="tstep">${bits}</div>`);
     } else if (ev.type === "delta") {
+      if (!bubbleShown) {           // first token: retire the loader, reveal the answer
+        setPhase("Answering", "grounded in cited evidence", MC.blue);
+        bubble.hidden = false;
+        bubbleShown = true;
+      }
       acc += ev.text;
       bubble.innerHTML = md(acc);
       thread.scrollTop = thread.scrollHeight;
     } else if (ev.type === "final") {
+      phaseEl?.remove();
+      bubble.hidden = false;
       lastCitations = ev.all_evidence;
       bubble.innerHTML = citeChips(md(ev.answer), ev.all_evidence);
       const conf = ev.confidence;
@@ -245,7 +307,7 @@ async function loadEquipment() {
 $("#rca-run").addEventListener("click", async () => {
   const btn = $("#rca-run");
   btn.disabled = true; btn.textContent = "analyzing…";
-  $("#rca-out").innerHTML = `<div class="card"><span class="thinking">walking the graph, reasoning over history…</span></div>`;
+  $("#rca-out").innerHTML = `<div class="card">${loaderHTML("Walking the graph, reasoning over history…", "#1baf7a")}</div>`;
   try {
     const rca = await getJSON("/api/rca", {
       method: "POST", headers: { "Content-Type": "application/json" },
@@ -347,7 +409,7 @@ async function loadPatterns() {
 let compLoaded = false;
 async function loadCompliance(refresh = false) {
   if (compLoaded && !refresh) return;
-  $("#comp-out").innerHTML = `<div class="card"><span class="thinking">evaluating clauses against plant records…</span></div>`;
+  $("#comp-out").innerHTML = `<div class="card">${loaderHTML("Evaluating clauses against plant records…", "#2a78d6")}</div>`;
   try {
     const reg = await getJSON(`/api/compliance/register${refresh ? "?refresh=1" : ""}`);
     const counts = { gap: 0, partial: 0, satisfied: 0 };
