@@ -4,18 +4,40 @@
 const $ = (sel, el = document) => el.querySelector(sel);
 const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
 
-/* ---------------- tabs (with #hash deep links) ---------------- */
+/* ---------------- sidebar nav (with #hash deep links) ---------------- */
+const SECTION_TITLES = {
+  ask: "Ask the plant's memory",
+  rca: "Root Cause Analysis",
+  warn: "Proactive Warnings",
+  comp: "Compliance Register",
+  eval: "Evaluation — measured, not claimed",
+};
 function activateView(v) {
-  $$(".tab").forEach(t => t.classList.toggle("active", t.dataset.view === v));
+  $$(".nav-item").forEach(t => t.classList.toggle("active", t.dataset.view === v));
   $$(".view").forEach(s => s.classList.toggle("active", s.id === `view-${v}`));
+  const title = $("#section-title");
+  if (title && SECTION_TITLES[v]) title.textContent = SECTION_TITLES[v];
+  document.querySelector(".app")?.classList.remove("nav-open");  // close mobile drawer
   history.replaceState(null, "", `#${v}`);
   if (v === "comp") loadCompliance();
   if (v === "warn") { loadPatterns(); loadWarnings(false); }
   if (v === "eval") loadEvals();
   if (v === "rca") loadEquipment();
 }
-$$(".tab").forEach(tab =>
+$$(".nav-item").forEach(tab =>
   tab.addEventListener("click", () => activateView(tab.dataset.view)));
+
+/* mobile hamburger */
+$("#hamburger")?.addEventListener("click", () =>
+  document.querySelector(".app").classList.toggle("nav-open"));
+document.addEventListener("click", e => {
+  const app = document.querySelector(".app");
+  if (app?.classList.contains("nav-open") &&
+      !e.target.closest(".sidebar") && !e.target.closest("#hamburger")) {
+    app.classList.remove("nav-open");
+  }
+});
+
 window.addEventListener("DOMContentLoaded", () => {
   const v = location.hash.slice(1);
   if (["rca", "warn", "comp", "eval"].includes(v)) activateView(v);
@@ -41,12 +63,24 @@ async function getJSON(url, opts) {
   if (!r.ok) throw new Error(`${url}: ${r.status}`);
   return r.json();
 }
+function setBadge(id, n) {
+  const el = $(`#${id}`);
+  if (!el) return;
+  if (n > 0) { el.textContent = n; el.hidden = false; }
+  else { el.hidden = true; }
+}
 
 /* ---------------- graph chip ---------------- */
 getJSON("/api/graph/stats").then(d => {
-  $("#graph-chip").textContent =
-    `${d.stats.nodes} nodes · ${d.stats.edges} edges · ${d.ingest.text_chunks ?? "?"} chunks · ${d.ingest.visual_pages ?? 0} visual pages`;
+  const s = d.stats, ig = d.ingest;
+  $("#graph-chip").innerHTML =
+    `${s.nodes} nodes · ${s.edges} edges<br>${ig.text_chunks ?? "?"} chunks · ${ig.visual_pages ?? 0} visual pages`;
 }).catch(() => { $("#graph-chip").textContent = "fabric offline"; });
+
+/* prime sidebar badges from caches (cheap — no rebuild) */
+getJSON("/api/warnings").then(w => setBadge("warn-count", w.length)).catch(() => {});
+getJSON("/api/compliance/register").then(r =>
+  setBadge("comp-count", r.filter(x => x.status === "gap").length)).catch(() => {});
 
 /* ---------------- citation drawer ---------------- */
 let lastCitations = [];
@@ -269,6 +303,7 @@ async function loadWarnings(refresh = false) {
   btn.disabled = true; btn.textContent = "evaluating precursors…";
   try {
     const warns = await getJSON(`/api/warnings${refresh ? "?refresh=1" : ""}`);
+    setBadge("warn-count", warns.length);
     $("#warn-out").innerHTML = warns.length ? warns.map(w => `
       <div class="card warn-card ${w.urgency === "high" ? "urgent" : ""}">
         <div class="meta-row" style="margin:0 0 6px">
@@ -317,6 +352,7 @@ async function loadCompliance(refresh = false) {
     const reg = await getJSON(`/api/compliance/register${refresh ? "?refresh=1" : ""}`);
     const counts = { gap: 0, partial: 0, satisfied: 0 };
     reg.forEach(r => counts[r.status] = (counts[r.status] || 0) + 1);
+    setBadge("comp-count", counts.gap);
     $("#comp-summary").innerHTML = `
       <div class="tile"><div class="num" style="color:var(--crit-text)">${counts.gap}</div><div class="lbl">🔴 gaps</div></div>
       <div class="tile"><div class="num" style="color:var(--warn-text)">${counts.partial}</div><div class="lbl">🟡 partial</div></div>
