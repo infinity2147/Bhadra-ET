@@ -8,7 +8,7 @@ const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
 const SECTION_TITLES = {
   ask: "Ask the plant's memory",
   assets: "Asset Explorer",
-  rca: "Root Cause Analysis",
+  rca: "Equipment Diagnostics",
   warn: "Proactive Warnings",
   comp: "Compliance Register",
   eval: "Evaluation — measured, not claimed",
@@ -620,7 +620,7 @@ async function openAsset(tag) {
         <div class="tile"><div class="num" ${st.incidents ? 'style="color:var(--warn-text)"' : ""}>${st.incidents}</div><div class="lbl">incidents</div></div>
       </div>
       <div class="asset-actions">
-        <button class="primary" onclick="goRCA('${esc(eqp.id)}')">Run root-cause analysis</button>
+        <button class="primary" onclick="goRCA('${esc(eqp.id)}')">Run diagnostics</button>
         <button class="primary" style="background:var(--surface-2);color:var(--s1-deep);border:1px solid var(--s1-line)" onclick="askAbout('${esc(eqp.id)}')">Ask about ${esc(eqp.id)}</button>
       </div>
       <div class="asset-metagrid">
@@ -690,7 +690,7 @@ $("#add-asset-btn")?.addEventListener("click", async () => {
     const d = await r.json();
     if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`);
     out.innerHTML = `<div class="result-ok"><b>${esc(d.tag)}</b> added to
-      <b>${esc(d.area)}</b> — now live in Assets, Root Cause and search.
+      <b>${esc(d.area)}</b> — now live in Assets, Diagnostics and search.
       <a href="#assets" onclick="activateView('assets');setTimeout(()=>openAsset('${esc(d.tag)}'),150)">Open ${esc(d.tag)} →</a></div>`;
     ["f-tag","f-type","f-service","f-mfr","f-model","f-install"].forEach(i => $("#"+i).value = "");
     invalidateFabricViews();
@@ -730,7 +730,7 @@ upBtn?.addEventListener("click", async () => {
     out.innerHTML = `<div class="result-ok">
       <b>${esc(d.doc_id)}</b> ingested — ${d.pages} page(s), ${d.text_chunks} text chunk(s),
       ${d.visual_pages} visual page(s), ${d.edges_added} graph edge(s).
-      ${d.new_equipment?.length ? `<br>New assets: <b>${d.new_equipment.map(esc).join(", ")}</b> (now in Assets & Root Cause).` : ""}
+      ${d.new_equipment?.length ? `<br>New assets: <b>${d.new_equipment.map(esc).join(", ")}</b> (now in Assets & Diagnostics).` : ""}
       <br><span class="sub">${esc(d.summary || "")}</span>
       <div style="margin-top:6px">Extracted: ${ents}</div>
       <div style="margin-top:6px">Now ask about it in <a href="#" onclick="activateView('ask')">Ask</a>.</div>

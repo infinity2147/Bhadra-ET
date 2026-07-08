@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <title>SMRITI — Unit 4 Operations Brain</title>
-<link rel="stylesheet" href="/static/style.css?v=9">
+<link rel="stylesheet" href="/static/style.css?v=10">
 </head>
 <body data-palette="#2a78d6,#1baf7a">
 <div class="app">
@@ -28,9 +28,9 @@
         <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
         <span class="nav-label">Assets</span>
       </button>
-      <button class="nav-item" data-view="rca" title="Root Cause">
+      <button class="nav-item" data-view="rca" title="Diagnostics">
         <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M3 12h4l3 7 4-15 3 8h4"/></svg>
-        <span class="nav-label">Root&nbsp;Cause</span>
+        <span class="nav-label">Diagnostics</span>
       </button>
       <button class="nav-item" data-view="warn" title="Warnings">
         <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M12 4l9 16H3z"/><path d="M12 10v4"/><path d="M12 17.2v.1"/></svg>
@@ -112,9 +112,10 @@
       <!-- RCA -->
       <section id="view-rca" class="view">
         <div class="panel-head">
-          <h2>Root Cause Analysis</h2>
-          <p class="hint">Graph-native reasoning over the full maintenance, inspection
-             and incident history — plus sister equipment.</p>
+          <h2>Equipment Diagnostics</h2>
+          <p class="hint">Diagnose why an asset keeps failing — graph-native reasoning
+             over its full maintenance, inspection and incident history, plus
+             cross-checks against sister equipment.</p>
           <div class="row">
             <select id="rca-tag"></select>
             <input id="rca-symptom" type="text" placeholder="symptom (optional)">
@@ -157,7 +158,7 @@
         <div class="panel-head">
           <h2>Add to the knowledge fabric</h2>
           <p class="hint">Anything you add flows into the graph and is live immediately —
-             new assets appear in <b>Assets</b> and <b>Root Cause</b>, documents become
+             new assets appear in <b>Assets</b> and <b>Diagnostics</b>, documents become
              searchable and citable in <b>Ask</b>, and <b>Warnings</b> / <b>Compliance</b>
              recompute with the new records.</p>
         </div>
@@ -225,6 +226,6 @@
 </div>
 <div id="scrim" class="scrim hidden"></div>
 
-<script src="/static/app.js?v=9"></script>
+<script src="/static/app.js?v=10"></script>
 </body>
 </html>
