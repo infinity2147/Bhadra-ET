@@ -64,18 +64,31 @@ def _confidence(answer: str, citations: list[dict], evidence: list[dict]) -> flo
     return round(0.35 + 0.45 * coverage + 0.20 * strength, 2)
 
 
-def ask(query: str, stream_tokens: bool = True) -> Iterator[dict]:
+def _history_block(history: list[dict]) -> str:
+    if not history:
+        return ""
+    turns = "\n".join(
+        f"{m['role'].upper()}: {m['content'][:600]}" for m in history[-6:])
+    return (f"CONVERSATION SO FAR (for context; the user may be following up):\n"
+            f"{turns}\n\n")
+
+
+def ask(query: str, stream_tokens: bool = True,
+        history: list[dict] | None = None) -> Iterator[dict]:
+    history = history or []
     trace: list[dict] = []
     yield {"type": "trace", "step": "start", "query": query}
-    r = retrieve(query, trace=trace)
+    r = retrieve(query, trace=trace, history=history)
     for t in trace:
         yield {"type": "trace", **t}
 
     ev_text, citations = _evidence_block(r["evidence"])
     used_markers: set[str] = set()
-    prompt = (f"EVIDENCE BLOCKS:\n{ev_text}\n\n"
+    prompt = (f"{_history_block(history)}"
+              f"EVIDENCE BLOCKS:\n{ev_text}\n\n"
               f"QUESTION from plant personnel: {query}\n\n"
-              f"Answer per your rules, citing evidence markers.")
+              f"Answer per your rules, citing evidence markers. If this is a follow-up, "
+              f"stay consistent with the conversation but only state facts the evidence supports.")
 
     parts: list[str] = []
     if stream_tokens:

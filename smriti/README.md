@@ -80,6 +80,12 @@ the reasoning trace and the eval harness.
 5. **Trust as a feature** — every sentence cites; citations click through to the exact
    page; confidence is scored; "insufficient evidence" is a first-class answer; and an
    eval dashboard shows measured faithfulness/citation-correctness vs a baseline.
+6. **Built to be used, not just demoed** — the copilot is **multi-turn** (ask "why does
+   P-101 fail?" then "what about P-103?" — the follow-up is resolved against the
+   conversation via a fast-model query rewrite), and an **Asset Explorer** lets you
+   browse every equipment item → its health timeline, governing regulations and the
+   P&ID it sits on, with one-click jumps into RCA or the copilot. It's a navigable
+   operations brain, not a search box.
 
 ## Repository layout
 

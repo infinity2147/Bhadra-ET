@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <title>SMRITI — Unit 4 Operations Brain</title>
-<link rel="stylesheet" href="/static/style.css?v=5">
+<link rel="stylesheet" href="/static/style.css?v=8">
 </head>
 <body data-palette="#2a78d6,#1baf7a">
 <div class="app">
@@ -23,6 +23,10 @@
       <button class="nav-item active" data-view="ask" title="Ask">
         <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 4V6a1 1 0 0 1 1-1z"/></svg>
         <span class="nav-label">Ask</span>
+      </button>
+      <button class="nav-item" data-view="assets" title="Assets">
+        <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        <span class="nav-label">Assets</span>
       </button>
       <button class="nav-item" data-view="rca" title="Root Cause">
         <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M3 12h4l3 7 4-15 3 8h4"/></svg>
@@ -57,6 +61,9 @@
         <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div class="topbar-title" id="section-title">Ask the plant&rsquo;s memory</div>
+      <button class="newchat" id="new-chat" title="Start a new conversation">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New chat
+      </button>
       <div class="topbar-meta" id="topbar-meta">Problem Statement 8 · ET AI Hackathon 2026</div>
     </header>
 
@@ -84,6 +91,17 @@
             <svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
           </button>
         </form>
+      </section>
+
+      <!-- ASSETS -->
+      <section id="view-assets" class="view">
+        <div class="assets-layout">
+          <div class="assets-list" id="assets-list"></div>
+          <div class="assets-detail scroll-pane" id="assets-detail">
+            <div class="assets-empty">Select an asset to see its health, history,
+              governing regulations and drawings.</div>
+          </div>
+        </div>
       </section>
 
       <!-- RCA -->
@@ -154,6 +172,6 @@
 </div>
 <div id="scrim" class="scrim hidden"></div>
 
-<script src="/static/app.js?v=5"></script>
+<script src="/static/app.js?v=8"></script>
 </body>
 </html>

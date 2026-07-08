@@ -7,6 +7,7 @@ const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
 /* ---------------- sidebar nav (with #hash deep links) ---------------- */
 const SECTION_TITLES = {
   ask: "Ask the plant's memory",
+  assets: "Asset Explorer",
   rca: "Root Cause Analysis",
   warn: "Proactive Warnings",
   comp: "Compliance Register",
@@ -17,12 +18,14 @@ function activateView(v) {
   $$(".view").forEach(s => s.classList.toggle("active", s.id === `view-${v}`));
   const title = $("#section-title");
   if (title && SECTION_TITLES[v]) title.textContent = SECTION_TITLES[v];
+  document.body.classList.toggle("on-ask", v === "ask");
   document.querySelector(".app")?.classList.remove("nav-open");  // close mobile drawer
   history.replaceState(null, "", `#${v}`);
   if (v === "comp") loadCompliance();
   if (v === "warn") { loadPatterns(); loadWarnings(false); }
   if (v === "eval") loadEvals();
   if (v === "rca") loadEquipment();
+  if (v === "assets") loadAssets();
 }
 $$(".nav-item").forEach(tab =>
   tab.addEventListener("click", () => activateView(tab.dataset.view)));
@@ -40,7 +43,8 @@ document.addEventListener("click", e => {
 
 window.addEventListener("DOMContentLoaded", () => {
   const v = location.hash.slice(1);
-  if (["rca", "warn", "comp", "eval"].includes(v)) activateView(v);
+  if (["assets", "rca", "warn", "comp", "eval"].includes(v)) activateView(v);
+  else document.body.classList.add("on-ask");
 });
 
 /* ---------------- helpers ---------------- */
@@ -132,13 +136,30 @@ function closeDrawer() {
   $("#scrim").classList.add("hidden");
 }
 
-/* ---------------- ASK (SSE chat) ---------------- */
+/* ---------------- ASK (SSE chat, multi-turn) ---------------- */
 const thread = $("#thread");
+let conversation = [];   // [{role:"user"|"assistant", content}] — sent for follow-ups
 $("#ask-form").addEventListener("submit", e => { e.preventDefault(); sendAsk(); });
-$$(".sugg").forEach(b => b.addEventListener("click", () => {
-  $("#ask-input").value = b.textContent.trim();
-  sendAsk();
-}));
+document.addEventListener("click", e => {
+  const s = e.target.closest(".sugg");
+  if (s) { $("#ask-input").value = s.textContent.trim(); sendAsk(); }
+});
+$("#new-chat")?.addEventListener("click", () => {
+  conversation = [];
+  thread.innerHTML = `
+    <div class="welcome">
+      <div class="hero-mark">${matrixHTML("hero")}</div>
+      <h2>Ask the plant&rsquo;s memory</h2>
+      <p>Every drawing, work order, procedure, inspection, near-miss and
+         regulation of Unit 4 — fused into one graph you can talk to.</p>
+      <div class="suggestions">
+        <button class="sugg">P-101 keeps tripping on high temperature — what feeds it, has this happened before, and what does the manual say to check?</button>
+        <button class="sugg">Why does P-101 keep failing?</button>
+        <button class="sugg">What is the current procedure for P-101 / P-102 changeover?</button>
+        <button class="sugg">Is there any risk with the confined space entry planned for TK-401 tomorrow?</button>
+      </div>
+    </div>`;
+});
 
 async function sendAsk() {
   const q = $("#ask-input").value.trim();
@@ -184,8 +205,9 @@ async function sendAsk() {
   try {
     const resp = await fetch("/api/ask", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: q }),
+      body: JSON.stringify({ query: q, history: conversation.slice(-6) }),
     });
+    conversation.push({ role: "user", content: q });
     const reader = resp.body.getReader();
     const dec = new TextDecoder();
     let buf = "";
@@ -210,7 +232,10 @@ async function sendAsk() {
   function handleEvent(ev) {
     if (ev.type === "trace") {
       let bits = "";
-      if (ev.step === "route") {
+      if (ev.step === "contextualize") {
+        setPhase("Reading the conversation", `resolved to: ${ev.rewritten}`, MC.blue);
+        bits = `<b>context</b> follow-up resolved → "${esc(ev.rewritten)}"`;
+      } else if (ev.step === "route") {
         const primary = ev.modalities?.[0];
         const color = primary === "graph" ? MC.teal : primary === "visual" ? MC.amber : MC.blue;
         setPhase(`Routing → ${ev.modalities?.join(" + ")}`,
@@ -247,6 +272,7 @@ async function sendAsk() {
       bubble.hidden = false;
       lastCitations = ev.all_evidence;
       bubble.innerHTML = citeChips(md(ev.answer), ev.all_evidence);
+      conversation.push({ role: "assistant", content: ev.answer.slice(0, 900) });
       const conf = ev.confidence;
       const cls = conf >= 0.7 ? "hi" : conf >= 0.45 ? "mid" : "lo";
       const mods = ev.modalities_used.map(m => `<span class="chip mod">${m}</span>`).join("");
@@ -515,4 +541,108 @@ async function loadEvals() {
     $("#eval-chart").innerHTML = "";
     $("#eval-table").innerHTML = "";
   }
+}
+
+/* ---------------- ASSETS EXPLORER ---------------- */
+let assetsLoaded = false;
+async function loadAssets(force = false) {
+  if (assetsLoaded && !force) return;
+  const list = $("#assets-list");
+  list.innerHTML = `<div style="padding:14px">${loaderHTML("loading assets…")}</div>`;
+  try {
+    const eq = await getJSON("/api/equipment");
+    const byArea = {};
+    eq.forEach(e => (byArea[e.area || "Unassigned"] ??= []).push(e));
+    list.innerHTML = Object.keys(byArea).sort().map(area => `
+      <div class="assets-group-label">${esc(area)}</div>
+      ${byArea[area].map(e => `
+        <button class="asset-item" data-asset="${esc(e.tag)}">
+          <span class="asset-dot ${esc(e.criticality || "low")}"></span>
+          <span>
+            <div class="a-tag">${esc(e.tag)}</div>
+            <div class="a-svc">${esc(e.service || e.type || "")}</div>
+          </span>
+        </button>`).join("")}`).join("");
+    assetsLoaded = true;
+    // auto-open the hero asset first time
+    if (!$(".asset-item.active")) openAsset("P-101");
+  } catch (e) {
+    list.innerHTML = `<div style="padding:14px">error: ${esc(e.message)}</div>`;
+  }
+}
+document.addEventListener("click", e => {
+  const it = e.target.closest(".asset-item");
+  if (it) openAsset(it.dataset.asset);
+});
+
+async function openAsset(tag) {
+  $$(".asset-item").forEach(a => a.classList.toggle("active", a.dataset.asset === tag));
+  const out = $("#assets-detail");
+  out.innerHTML = `<div class="card">${loaderHTML("composing asset view…", "#2a78d6")}</div>`;
+  try {
+    const d = await getJSON(`/api/equipment/${encodeURIComponent(tag)}/summary`);
+    const eqp = d.equipment, st = d.stats;
+    const crit = eqp.criticality || "low";
+    const metas = [
+      ["Type", eqp.equipment_type], ["Service", eqp.service],
+      ["Manufacturer", eqp.manufacturer], ["Model", eqp.model],
+      ["Installed", eqp.install_date], ["Area", eqp.area],
+      ...(eqp.seal_model ? [["Seal", eqp.seal_model]] : []),
+    ].filter(([, v]) => v);
+    const drawings = (d.drawings || []).map(ov => {
+      const c = document.createElement("div"); renderOverlay(c, ov); return c.innerHTML;
+    }).join("");
+    const timeline = d.timeline.slice(0, 20).map(ev => `
+      <tr><td>${esc(ev.date)}</td>
+        <td><span class="cite" data-evd="${esc(ev.id)}">${esc(ev.id)}</span></td>
+        <td>${esc(ev.kind)}</td><td>${esc(ev.what || "")}</td></tr>`).join("");
+    const regs = d.governing.map(g => `
+      <div class="card">
+        <div class="meta-row" style="margin:0 0 4px">
+          <span class="chip">${esc(g.standard)} ${esc(g.clause)}</span>
+          ${g.status ? `<span class="badge ${esc(g.status)}">${esc(g.status)}</span>` : ""}
+        </div>
+        <div>${esc(g.title)}</div>
+      </div>`).join("") || `<div class="sub">No mapped regulatory clauses.</div>`;
+
+    out.innerHTML = `
+      <div class="asset-hero">
+        <span class="asset-dot ${esc(crit)}" style="width:14px;height:14px;margin-top:8px"></span>
+        <div><h2>${esc(eqp.id)}</h2>
+          <div class="sub">${esc(eqp.service || "")} · criticality ${esc(crit)}</div></div>
+      </div>
+      <div class="tiles" style="padding:0;margin:12px 0">
+        <div class="tile"><div class="num">${st.work_orders}</div><div class="lbl">work orders</div></div>
+        <div class="tile"><div class="num" ${st.breakdowns ? 'style="color:var(--crit-text)"' : ""}>${st.breakdowns}</div><div class="lbl">breakdowns / CM</div></div>
+        <div class="tile"><div class="num">${st.inspections}</div><div class="lbl">inspections</div></div>
+        <div class="tile"><div class="num" ${st.incidents ? 'style="color:var(--warn-text)"' : ""}>${st.incidents}</div><div class="lbl">incidents</div></div>
+      </div>
+      <div class="asset-actions">
+        <button class="primary" onclick="goRCA('${esc(eqp.id)}')">Run root-cause analysis</button>
+        <button class="primary" style="background:var(--surface-2);color:var(--s1-deep);border:1px solid var(--s1-line)" onclick="askAbout('${esc(eqp.id)}')">Ask about ${esc(eqp.id)}</button>
+      </div>
+      <div class="asset-metagrid">
+        ${metas.map(([k, v]) => `<div class="m"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`).join("")}
+      </div>
+      ${drawings ? `<h3 style="margin:16px 2px 6px">On the drawing</h3>${drawings}` : ""}
+      <h3 style="margin:16px 2px 6px">Governing regulations</h3>${regs}
+      <h3 style="margin:16px 2px 6px">History timeline</h3>
+      <div class="card" style="overflow-x:auto">
+        <table class="evaltab"><tr><th>date</th><th>record</th><th>type</th><th>event</th></tr>${timeline}</table>
+      </div>`;
+    out.scrollTop = 0;
+  } catch (e) {
+    out.innerHTML = `<div class="card">error: ${esc(e.message)}</div>`;
+  }
+}
+
+/* cross-links from an asset into the reasoning agents */
+function goRCA(tag) {
+  activateView("rca");
+  loadEquipment().then(() => { $("#rca-tag").value = tag; $("#rca-run").click(); });
+}
+function askAbout(tag) {
+  activateView("ask");
+  $("#ask-input").value = `Give me a full status on ${tag} — recent failures, root cause, and any compliance issues.`;
+  $("#ask-input").focus();
 }

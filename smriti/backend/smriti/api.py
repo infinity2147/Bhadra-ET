@@ -49,10 +49,11 @@ FRONTEND = config.ROOT / "frontend"
 async def api_ask(body: dict):
     from .copilot import ask
     query = (body.get("query") or "").strip()
+    history = body.get("history") or []
 
     def gen():
         try:
-            for event in ask(query):
+            for event in ask(query, history=history):
                 yield f"data: {json.dumps(event)}\n\n"
         except Exception as exc:
             yield f"data: {json.dumps({'type': 'error', 'error': str(exc)})}\n\n"
@@ -82,6 +83,50 @@ async def equipment_context(tag: str):
     from . import stores
     return {"equipment": node, "neighborhood": nb,
             "regions": stores.regions_for(tag=tag)}
+
+
+@app.get("/api/equipment/{tag}/summary")
+async def equipment_summary(tag: str):
+    """Composed asset view: metadata, health timeline, governing regs, drawing overlay."""
+    from . import rca, retrieval
+    kg = get_graph()
+    node = kg.node(tag)
+    if not node:
+        return JSONResponse({"error": "unknown tag"}, status_code=404)
+
+    timeline = rca.failure_timeline(tag)
+    wos = [e for e in timeline if e["kind"] in ("PM", "CM", "breakdown")]
+    insp = [e for e in timeline if e["kind"].startswith("inspection")]
+    inc = [e for e in timeline if e["kind"].startswith("incident")]
+    breakdowns = [e for e in timeline if e["kind"] in ("CM", "breakdown")]
+
+    # governing regulatory clauses (+ status from the compliance cache if present)
+    reg_status = {}
+    reg_cache = config.DATA_DIR / "compliance_register.json"
+    if reg_cache.exists():
+        for r in json.loads(reg_cache.read_text()):
+            reg_status[(r["standard"], r["clause"])] = r["status"]
+    governing = []
+    for e in kg.edges_of(tag, "GOVERNED_BY", "out"):
+        c = kg.node(e["dst"])
+        if c and c.get("standard"):
+            governing.append({"standard": c["standard"], "clause": c["clause"],
+                              "title": c["title"],
+                              "status": reg_status.get((c["standard"], c["clause"]))})
+
+    overlays = retrieval.build_overlays([tag], [])
+
+    return {
+        "equipment": {k: node.get(k) for k in
+                      ("id", "equipment_type", "service", "manufacturer", "model",
+                       "install_date", "area", "criticality", "seal_model")},
+        "stats": {"work_orders": len(wos), "inspections": len(insp),
+                  "incidents": len(inc), "breakdowns": len(breakdowns),
+                  "last_event": timeline[-1]["date"] if timeline else None},
+        "timeline": list(reversed(timeline)),
+        "governing": governing,
+        "drawings": overlays,
+    }
 
 
 @app.post("/api/rca")

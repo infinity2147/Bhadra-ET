@@ -49,6 +49,33 @@ def route(query: str) -> dict:
                 "tags": tags_exact}
 
 
+REWRITE_PROMPT = """Rewrite the user's latest question into a standalone question for
+document retrieval, resolving pronouns and ellipsis ("it", "that pump", "why?",
+"what about P-103") using the conversation. Keep equipment tags explicit.
+
+Conversation so far:
+{history}
+
+Latest question: {query}
+
+Return ONLY the rewritten standalone question, nothing else."""
+
+
+def contextualize(query: str, history: list[dict]) -> str:
+    """Resolve a follow-up against prior turns → a standalone retrieval query."""
+    if not history:
+        return query
+    convo = "\n".join(f"{m['role']}: {m['content'][:400]}" for m in history[-6:])
+    try:
+        rewritten = llm.complete(
+            REWRITE_PROMPT.format(history=convo, query=query),
+            model=config.MODEL_FAST).strip().strip('"')
+        # guard against the model over-rewriting a already-complete question
+        return rewritten if 3 <= len(rewritten) <= 400 else query
+    except Exception:
+        return query
+
+
 def graph_evidence(tags: list[str], intent: str) -> list[dict]:
     """Turn graph neighborhoods/traces into citable evidence items."""
     kg = get_graph()
@@ -98,14 +125,18 @@ def graph_evidence(tags: list[str], intent: str) -> list[dict]:
     return items
 
 
-def retrieve(query: str, trace: Optional[list] = None) -> dict:
+def retrieve(query: str, trace: Optional[list] = None,
+             history: Optional[list] = None) -> dict:
     trace = trace if trace is not None else []
-    routing = route(query)
+    search_query = contextualize(query, history or [])
+    if search_query != query:
+        trace.append({"step": "contextualize", "rewritten": search_query})
+    routing = route(search_query)
     trace.append({"step": "route", **routing})
 
     evidence: list[dict] = []
     if "text" in routing["modalities"] or True:  # text always contributes
-        hits = stores.search_text(query, limit=config.TOP_K_TEXT)
+        hits = stores.search_text(search_query, limit=config.TOP_K_TEXT)
         trace.append({"step": "text_search",
                       "hits": [(h["doc_id"], round(h["score"], 3)) for h in hits[:8]]})
         evidence.extend(hits)
@@ -117,7 +148,7 @@ def retrieve(query: str, trace: Optional[list] = None) -> dict:
     visual_hits = []
     if "visual" in routing["modalities"]:
         try:
-            visual_hits = stores.search_visual(query, limit=config.TOP_K_VISUAL)
+            visual_hits = stores.search_visual(search_query, limit=config.TOP_K_VISUAL)
             trace.append({"step": "visual_search",
                           "hits": [(h["doc_id"], f"p{h['page']}",
                                     round(h["score"], 2)) for h in visual_hits]})
@@ -145,7 +176,7 @@ def retrieve(query: str, trace: Optional[list] = None) -> dict:
         seen.add(key)
         deduped.append(e)
 
-    ranked = stores.rerank(query, deduped, top_k=config.TOP_K_FINAL)
+    ranked = stores.rerank(search_query, deduped, top_k=config.TOP_K_FINAL)
     # keep visual pages in evidence even if the cross-encoder dislikes their
     # synthetic description — they matched on appearance, not words.
     kept_ids = {id(e) for e in ranked}
