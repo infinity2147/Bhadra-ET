@@ -212,6 +212,22 @@ record is never orphaned. SOP uploads auto-supersede the prior revision. Fronten
 "Add data" view exposes both (multi-file dropzone with per-file "Detected: <type>
 → <id> — now in the timeline" results; bulk card with a record-type selector).
 
+### ✅ Also built: first-class structured intake (the credibility fix, Part A)
+Beyond the auto-classify/bulk paths, there are now dedicated typed endpoints that
+write the **byte-for-byte same graph structure as the batch ingest** (shared
+`intake.py` materialisers) but stamped `manual_intake` / confidence 1.0:
+`POST /api/records/{incident,work-order,inspection,permit}` (see `api.py`
+`_create_record`). Each persists (`graph.save()`), recomputes only the caches its
+type affects, and returns a **downstream-effect** summary. The permit endpoint
+re-runs `lessons.evaluate_upcoming()` and returns any freshly-fired warning — the
+live foresight demo beat. Frontend `view-add` is a **tabbed intake hub**
+(Incident/Work order/Inspection/Permit/Asset/Upload/Bulk) with a toast +
+`#warn`/`#rca=TAG`/`#assets=TAG` deep-link. Acceptance verified live: form-incident
+`:rec` has identical field keys to a batch incident; instant timeline; permit fires
+the TK-401 precursor warning; persists across restart. UI: a color-coded visual
+failure timeline (`timelineHTML`) replaces the old table in Diagnostics + Assets;
+RCA shows numbered evidence cause cards + an amber cross-asset callout.
+
 ### Still open (next candidates, NOT built)
 - **Human-in-the-loop review queue** for low-confidence classifications /
   rejected extractions (the `rejected` list exists in `extraction.py`).
