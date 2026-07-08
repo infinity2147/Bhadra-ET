@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <title>SMRITI — Unit 4 Operations Brain</title>
-<link rel="stylesheet" href="/static/style.css?v=10">
+<link rel="stylesheet" href="/static/style.css?v=11">
 </head>
 <body data-palette="#2a78d6,#1baf7a">
 <div class="app">
@@ -184,18 +184,46 @@
             </div>
 
             <div class="card">
-              <h4>Upload document</h4>
-              <p class="sub" style="margin-bottom:12px">PDF or text — P&amp;ID, work order,
-                 SOP, inspection, incident report, OEM manual, permit or regulation.
-                 SMRITI parses it, extracts typed entities against the ontology, indexes
-                 it (text + visual, no OCR) and links it into the graph.</p>
+              <h4>Upload documents</h4>
+              <p class="sub" style="margin-bottom:12px">Drop in <b>any</b> PDF or text —
+                 work order, inspection, SOP, incident report, permit, OEM manual or
+                 regulation, one or many at once. SMRITI <b>identifies each document's
+                 type itself</b> and extracts it into the right typed record — so a work
+                 order lands in the timeline, an incident feeds Warnings, an SOP becomes
+                 the current revision. Text + visual index, no OCR.</p>
               <label class="dropzone" id="dropzone">
-                <input type="file" id="doc-file" accept=".pdf,.txt,.md" hidden>
+                <input type="file" id="doc-file" accept=".pdf,.txt,.md" multiple hidden>
                 <svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--ink-3)"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-                <div id="dz-text">Drop a file here, or click to choose</div>
+                <div id="dz-text">Drop files here, or click to choose (multiple allowed)</div>
               </label>
-              <button id="upload-btn" class="primary" style="margin-top:12px" disabled>Ingest document</button>
+              <button id="upload-btn" class="primary" style="margin-top:12px" disabled>Ingest documents</button>
               <div id="upload-result" class="add-result"></div>
+            </div>
+
+            <div class="card">
+              <h4>Bulk import (CMMS export)</h4>
+              <p class="sub" style="margin-bottom:12px">Load years of history in one shot.
+                 Export a <b>CSV or JSON</b> table from SAP&nbsp;PM / Maximo / your CMMS —
+                 SMRITI maps the columns to typed records (no per-row AI), so thousands of
+                 rows flow straight into the fabric. Pick what the rows are:</p>
+              <div class="form">
+                <label>Record type
+                  <select id="bulk-type">
+                    <option value="work_order">Work orders</option>
+                    <option value="inspection">Inspections</option>
+                    <option value="incident">Incidents / near-misses</option>
+                    <option value="permit">Permits to work</option>
+                    <option value="equipment">Equipment / asset register</option>
+                  </select>
+                </label>
+              </div>
+              <label class="dropzone" id="bulk-dropzone" style="margin-top:10px">
+                <input type="file" id="bulk-file" accept=".csv,.json" hidden>
+                <svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--ink-3)"><path d="M3 3h18v18H3z"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+                <div id="bulk-dz-text">Drop a CSV/JSON here, or click to choose</div>
+              </label>
+              <button id="bulk-btn" class="primary" style="margin-top:12px" disabled>Import table</button>
+              <div id="bulk-result" class="add-result"></div>
             </div>
           </div>
         </div>
@@ -226,6 +254,6 @@
 </div>
 <div id="scrim" class="scrim hidden"></div>
 
-<script src="/static/app.js?v=10"></script>
+<script src="/static/app.js?v=11"></script>
 </body>
 </html>

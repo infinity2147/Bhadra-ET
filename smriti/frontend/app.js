@@ -700,45 +700,105 @@ $("#add-asset-btn")?.addEventListener("click", async () => {
   btn.disabled = false;
 });
 
-/* upload document */
+/* upload documents (multi-file, auto-classified) */
 const dz = $("#dropzone"), docFile = $("#doc-file"), upBtn = $("#upload-btn");
-let pendingFile = null;
-function setFile(f) {
-  pendingFile = f;
-  $("#dz-text").textContent = f ? `${f.name} (${(f.size/1024).toFixed(0)} KB)` : "Drop a file here, or click to choose";
-  upBtn.disabled = !f;
+let pendingFiles = [];
+const TYPE_LABEL = {
+  work_order: "Work order", inspection: "Inspection", incident: "Incident / near-miss",
+  permit: "Permit to work", sop: "SOP (procedure)", equipment: "Equipment",
+  oem_manual: "OEM manual", regulatory: "Regulation", email: "Email", generic: "Document",
+};
+function setFiles(list) {
+  pendingFiles = Array.from(list || []);
+  const n = pendingFiles.length;
+  $("#dz-text").textContent = n
+    ? (n === 1 ? `${pendingFiles[0].name} (${(pendingFiles[0].size/1024).toFixed(0)} KB)`
+               : `${n} files selected`)
+    : "Drop files here, or click to choose (multiple allowed)";
+  upBtn.disabled = !n;
 }
 dz?.addEventListener("click", () => docFile.click());
-docFile?.addEventListener("change", () => setFile(docFile.files[0]));
+docFile?.addEventListener("change", () => setFiles(docFile.files));
 ["dragover","dragenter"].forEach(ev => dz?.addEventListener(ev, e => { e.preventDefault(); dz.classList.add("drag"); }));
 ["dragleave","drop"].forEach(ev => dz?.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove("drag"); }));
-dz?.addEventListener("drop", e => { if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
+dz?.addEventListener("drop", e => { if (e.dataTransfer.files.length) setFiles(e.dataTransfer.files); });
+
+function docResultHTML(doc) {
+  const type = TYPE_LABEL[doc.detected_type] || doc.detected_type;
+  const lands = (doc.created || []).map(c => {
+    if (c.in_timeline) return "now in the failure timeline";
+    if (c.feeds_warnings) return "feeding Warnings";
+    if (c.in_assets) return "now in Assets";
+    if (c.supersedes) return `current revision (supersedes ${esc(c.supersedes)})`;
+    if (c.in_search) return "searchable in Ask";
+    return "indexed";
+  });
+  const ids = (doc.created || []).map(c => esc(c.id)).filter(Boolean).join(", ");
+  return `<div class="result-ok" style="margin-bottom:8px">
+    <span class="ent" style="background:#2a78d611;border-color:#2a78d644">Detected: <b>${esc(type)}</b></span>
+    <b>${esc(doc.doc_id)}</b> → <b>${ids || "indexed"}</b>${lands.length ? " — " + lands.join(", ") + "." : "."}
+    ${doc.new_equipment?.length ? `<br>New asset(s): <b>${doc.new_equipment.map(esc).join(", ")}</b>.` : ""}
+    <br><span class="sub">${esc(doc.summary || "")}</span>
+  </div>`;
+}
 
 upBtn?.addEventListener("click", async () => {
-  if (!pendingFile) return;
+  if (!pendingFiles.length) return;
   const out = $("#upload-result");
   upBtn.disabled = true;
-  out.innerHTML = loaderHTML("parsing · extracting entities · indexing (text + visual)…", "#d97706");
+  out.innerHTML = loaderHTML(`classifying · extracting typed records · indexing (${pendingFiles.length} file${pendingFiles.length>1?"s":""})…`, "#d97706");
   try {
     const fd = new FormData();
-    fd.append("file", pendingFile);
+    pendingFiles.forEach(f => fd.append("files", f));
     const r = await fetch("/api/ingest", { method: "POST", body: fd });
     const d = await r.json();
     if (!r.ok) throw new Error(d.error || d.detail || `HTTP ${r.status}`);
-    const ents = (d.entities || []).map(e =>
-      `<span class="ent">${esc(e.type)}: ${esc(e.id)}</span>`).join("") || "<i>none</i>";
-    out.innerHTML = `<div class="result-ok">
-      <b>${esc(d.doc_id)}</b> ingested — ${d.pages} page(s), ${d.text_chunks} text chunk(s),
-      ${d.visual_pages} visual page(s), ${d.edges_added} graph edge(s).
-      ${d.new_equipment?.length ? `<br>New assets: <b>${d.new_equipment.map(esc).join(", ")}</b> (now in Assets & Diagnostics).` : ""}
-      <br><span class="sub">${esc(d.summary || "")}</span>
-      <div style="margin-top:6px">Extracted: ${ents}</div>
-      <div style="margin-top:6px">Now ask about it in <a href="#" onclick="activateView('ask')">Ask</a>.</div>
-    </div>`;
-    setFile(null); docFile.value = "";
+    out.innerHTML = (d.documents || []).map(docResultHTML).join("")
+      + `<div style="margin-top:4px" class="sub">${d.ingested} document(s) ingested — ask about them in
+         <a href="#" onclick="activateView('ask')">Ask</a>, or open <a href="#" onclick="activateView('assets')">Assets</a>.</div>`;
+    setFiles([]); docFile.value = "";
     invalidateFabricViews();
   } catch (e) {
     out.innerHTML = `<div class="result-err">${esc(e.message)}</div>`;
   }
   upBtn.disabled = false;
+});
+
+/* bulk table import (CMMS export → typed records, no per-row LLM) */
+const bulkDz = $("#bulk-dropzone"), bulkFile = $("#bulk-file"), bulkBtn = $("#bulk-btn");
+let pendingBulk = null;
+function setBulk(f) {
+  pendingBulk = f;
+  $("#bulk-dz-text").textContent = f ? `${f.name} (${(f.size/1024).toFixed(0)} KB)` : "Drop a CSV/JSON here, or click to choose";
+  bulkBtn.disabled = !f;
+}
+bulkDz?.addEventListener("click", () => bulkFile.click());
+bulkFile?.addEventListener("change", () => setBulk(bulkFile.files[0]));
+["dragover","dragenter"].forEach(ev => bulkDz?.addEventListener(ev, e => { e.preventDefault(); bulkDz.classList.add("drag"); }));
+["dragleave","drop"].forEach(ev => bulkDz?.addEventListener(ev, e => { e.preventDefault(); bulkDz.classList.remove("drag"); }));
+bulkDz?.addEventListener("drop", e => { if (e.dataTransfer.files[0]) setBulk(e.dataTransfer.files[0]); });
+
+bulkBtn?.addEventListener("click", async () => {
+  if (!pendingBulk) return;
+  const rtype = $("#bulk-type").value, out = $("#bulk-result");
+  bulkBtn.disabled = true;
+  out.innerHTML = loaderHTML("mapping columns · materialising typed records…", "#1baf7a");
+  try {
+    const fd = new FormData();
+    fd.append("file", pendingBulk);
+    const r = await fetch(`/api/ingest/table?record_type=${encodeURIComponent(rtype)}`, { method: "POST", body: fd });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || d.detail || `HTTP ${r.status}`);
+    out.innerHTML = `<div class="result-ok">
+      <b>${d.created}</b> ${esc(TYPE_LABEL[d.record_type] || d.record_type)} record(s) imported from
+      ${d.rows} row(s)${d.errors ? `, ${d.errors} skipped` : ""}.
+      ${d.new_equipment?.length ? `<br>New asset(s) created: <b>${d.new_equipment.map(esc).join(", ")}</b>.` : ""}
+      <br><span class="sub">Live now — visible in Assets, Diagnostics timelines, Warnings and Compliance.</span>
+    </div>`;
+    setBulk(null); bulkFile.value = "";
+    invalidateFabricViews();
+  } catch (e) {
+    out.innerHTML = `<div class="result-err">${esc(e.message)}</div>`;
+  }
+  bulkBtn.disabled = false;
 });

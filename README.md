@@ -86,12 +86,20 @@ the reasoning trace and the eval harness.
    browse every equipment item → its health timeline, governing regulations and the
    P&ID it sits on, with one-click jumps into RCA or the copilot. It's a navigable
    operations brain, not a search box.
-7. **The fabric grows live** — an **Add data** surface lets you register a new asset or
-   upload a document (PDF/text). Uploads are parsed, run through typed
-   entity/relation extraction against the ontology, and indexed (text + visual, no
-   OCR) — so new assets appear immediately in Assets/RCA, the document becomes
-   citable in Ask, and Warnings/Compliance recompute against the new records. This is
-   Agent 1 (§5.1) working incrementally, not just at build time.
+7. **Built to run for years, not just to demo — continuous intake** (`intake.py`).
+   A customer files new records every day, so the fabric grows continuously:
+   - **Drop in any document** (one or many) and SMRITI **classifies each one
+     itself** — work order, inspection, incident, permit, SOP, manual, regulation
+     — and extracts it into the *same typed record the corpus build produces*. So
+     an uploaded work order lands in the failure timeline, an incident's precursors
+     feed Warnings, a new SOP revision supersedes the old one — not a dead
+     "generic" node.
+   - **Bulk CMMS import** — a CSV/JSON export from SAP&nbsp;PM / Maximo maps
+     column→field (no per-row LLM), so *years* of work orders / inspections load in
+     one shot.
+   Unknown assets are auto-stubbed so nothing is orphaned; everything is indexed
+   (text + visual, no OCR) and Warnings/Compliance recompute. This is Agent 1
+   (§5.1) working incrementally, the way a plant actually runs it.
 
 ## Repository layout
 

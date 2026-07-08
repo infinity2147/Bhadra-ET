@@ -228,100 +228,82 @@ async def eval_latest():
     return JSONResponse({"error": "eval not yet run"}, status_code=404)
 
 
+def _index_visual(doc_id: str, pages: list[dict]) -> int:
+    """OCR-free visual index for an uploaded PDF's rendered pages (best effort)."""
+    if not config.VISUAL_ENABLED or not any(p.get("render") for p in pages):
+        return 0
+    try:
+        import hashlib
+        from PIL import Image
+        from . import stores
+        vm = stores.visual_model()
+        vpoints = []
+        for p in pages:
+            if not p.get("render"):
+                continue
+            img = Image.open(config.RENDER_DIR / p["render"]).convert("RGB")
+            emb = vm.embed_images([img])[0]
+            vid = int(hashlib.md5(f"{doc_id}#p{p['page']}".encode()).hexdigest()[:15], 16)
+            vpoints.append({"id": vid, "doc_id": doc_id, "page": p["page"],
+                            "render": p["render"], "multivector": emb})
+        stores.upsert_visual_pages(vpoints)
+        return len(vpoints)
+    except Exception:
+        return 0
+
+
 @app.post("/api/ingest")
-async def api_ingest(file: UploadFile, visual: bool = True):
-    """Live single-document ingestion: parse → extract → graph + text + visual index.
-    Whatever it extracts flows into the fabric: new equipment shows in Assets/RCA,
-    the document becomes searchable in Ask with page citations, and derived caches
-    (Warnings / Compliance) are invalidated so they recompute with the new data."""
-    from . import stores
-    from .extraction import extract as llm_extract
-    from .ingest import _next_chunk_id, normalize_tag, render_pdf, tags_in
-    from .ontology import NODE_TYPES, Provenance
+async def api_ingest(files: list[UploadFile], visual: bool = True):
+    """Continuous document intake — drop in ANY number of WO/inspection/SOP/incident/
+    permit/manual files. Each is classified and materialised into the SAME typed
+    records the corpus build produces, so it lands in the timeline, warnings and
+    compliance immediately (spec §5.1, made continuous). Derived caches are
+    invalidated so Warnings/Compliance recompute against the new records."""
+    from .ingest import render_pdf
+    from . import intake
 
-    kg = get_graph()
-    suffix = Path(file.filename or "upload.pdf").suffix or ".pdf"
-    doc_id = Path(file.filename or "upload").stem.replace(" ", "_")
-    with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
-        shutil.copyfileobj(file.file, tmp)
-        tmp_path = Path(tmp.name)
+    reports = []
+    for file in files:
+        suffix = Path(file.filename or "upload.pdf").suffix or ".pdf"
+        doc_id = Path(file.filename or "upload").stem.replace(" ", "_")
+        with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+            shutil.copyfileobj(file.file, tmp)
+            tmp_path = Path(tmp.name)
 
-    pages, text = [], ""
-    if suffix.lower() == ".pdf":
-        pages = render_pdf(tmp_path, doc_id)          # renders page PNGs for citations
-        text = "\n".join(p["text"] for p in pages)
-    else:
-        text = tmp_path.read_text(errors="ignore")
-        pages = [{"page": 1, "text": text, "render": None}]
+        if suffix.lower() == ".pdf":
+            pages = render_pdf(tmp_path, doc_id)      # page PNGs for citation click-through
+            text = "\n".join(p["text"] for p in pages)
+        else:
+            text = tmp_path.read_text(errors="ignore")
+            pages = [{"page": 1, "text": text, "render": None}]
 
-    known = [n["id"] for n in kg.nodes_by_type("Equipment")]
-    ext = llm_extract(doc_id, text, known)
-    prov = Provenance(source_doc_id=doc_id, extractor="llm_extraction", confidence=0.8)
-    kg.add_node(doc_id, "Document", prov, doc_type="uploaded",
-                render=(pages[0]["render"] if pages and pages[0].get("render") else None))
-
-    new_equipment = []
-    for ent in ext["entities"]:
-        if ent.get("type") not in NODE_TYPES or not ent.get("id"):
-            continue
-        eid = normalize_tag(ent["id"]) if ent["type"] == "Equipment" else ent["id"]
-        was_new = kg.node(eid) is None
-        kg.add_node(eid, ent["type"], prov, **ent.get("props", {}))
-        if ent["type"] == "Equipment":
-            kg.add_edge(eid, doc_id, "DESCRIBED_BY", prov)
-            if was_new:
-                area = ent.get("props", {}).get("area") or "Unassigned"
-                if not kg.node(area):
-                    kg.add_node(area, "Area", prov, name=area)
-                kg.add_edge(eid, area, "LOCATED_IN", prov)
-                new_equipment.append(eid)
-    added_edges = 0
-    for rel in ext["relations"]:
-        s = normalize_tag(rel["src"]); d = normalize_tag(rel["dst"])
-        s = s if kg.node(s) else rel["src"]; d = d if kg.node(d) else rel["dst"]
-        if kg.node(s) and kg.node(d):
-            kg.add_edge(s, d, rel["type"], prov)
-            added_edges += 1
-    # link any known tags mentioned in the doc
-    for tag in tags_in(text):
-        if kg.node(tag):
-            kg.add_edge(tag, doc_id, "DESCRIBED_BY", prov)
-    kg.save()
-
-    # text index — one chunk per page so citations resolve to the right page
-    chunks = [{"id": _next_chunk_id(), "text": (p["text"] or "")[:4000], "doc_id": doc_id,
-               "doc_type": "uploaded", "page": p["page"], "entity_tags": tags_in(p["text"] or "")}
-              for p in pages if (p["text"] or "").strip()]
-    if chunks:
-        stores.upsert_text_chunks(chunks)
-
-    # visual index — best effort (so an uploaded drawing/scan is retrievable, no OCR)
-    visual_pages = 0
-    if visual and config.VISUAL_ENABLED and any(p.get("render") for p in pages):
-        try:
-            import hashlib
-            from PIL import Image
-            vm = stores.visual_model()
-            vpoints = []
-            for p in pages:
-                if not p.get("render"):
-                    continue
-                img = Image.open(config.RENDER_DIR / p["render"]).convert("RGB")
-                emb = vm.embed_images([img])[0]
-                vid = int(hashlib.md5(f"{doc_id}#p{p['page']}".encode()).hexdigest()[:15], 16)
-                vpoints.append({"id": vid, "doc_id": doc_id, "page": p["page"],
-                                "render": p["render"], "multivector": emb})
-            stores.upsert_visual_pages(vpoints)
-            visual_pages = len(vpoints)
-        except Exception:
-            pass
+        report = intake.ingest_document(doc_id, text, pages)   # classify → typed records
+        report["pages"] = len(pages)
+        if visual:
+            report["visual_pages"] = _index_visual(doc_id, pages)
+        reports.append(report)
 
     _invalidate_derived_caches()
-    return {"doc_id": doc_id, "pages": len(pages),
-            "entities": ext["entities"], "relations": ext["relations"],
-            "edges_added": added_edges, "new_equipment": new_equipment,
-            "text_chunks": len(chunks), "visual_pages": visual_pages,
-            "rejected": ext["rejected"], "summary": ext["summary"]}
+    return {"ingested": len(reports), "documents": reports}
+
+
+@app.post("/api/ingest/table")
+async def api_ingest_table(file: UploadFile, record_type: str):
+    """Bulk CMMS-export intake: a CSV/JSON of many work orders / inspections /
+    incidents / permits / equipment → typed records, column-mapped, NO per-row
+    LLM. This is how years of history load. record_type ∈
+    {work_order, inspection, incident, permit, equipment}."""
+    from . import intake
+    raw = await file.read()
+    try:
+        rows = intake.parse_table(raw, file.filename or "upload.csv")
+    except Exception as exc:
+        return JSONResponse({"error": f"could not parse table: {exc}"}, status_code=400)
+    result = intake.ingest_table(rows, record_type)
+    if "error" in result:
+        return JSONResponse(result, status_code=400)
+    _invalidate_derived_caches()
+    return result
 
 
 app.mount("/renders", StaticFiles(directory=str(config.RENDER_DIR)), name="renders")
