@@ -287,6 +287,112 @@ async def api_ingest(files: list[UploadFile], visual: bool = True):
     return {"ingested": len(reports), "documents": reports}
 
 
+# ---------------------------------------------------------------- structured record intake
+# First-class typed forms for the four record types that drive the intelligence
+# layer. Each writes the SAME graph structure the batch ingest produces (shared
+# materialisers in intake.py) but with manual-intake provenance, and recomputes
+# exactly the caches its record type affects — so a hand-entered record is live in
+# the timeline / RCA / warnings / compliance with no restart and no re-ingest.
+_ID_PREFIX = {"incident": "INC", "work_order": "WO", "inspection": "INSP", "permit": "PTW"}
+_NODE_TYPE = {"incident": "Incident", "work_order": "WorkOrder", "inspection": "Inspection"}
+
+
+def _new_record_id(kg, rec_type: str, date: str | None) -> str:
+    year = (date or "")[:4] or "0000"
+    prefix = _ID_PREFIX[rec_type]
+    ntype = _NODE_TYPE.get(rec_type)
+    if ntype:
+        seq = sum(1 for n in kg.nodes_by_type(ntype)) + 1
+    else:  # permit has no :rec node — count permit Documents
+        seq = sum(1 for d in kg.nodes_by_type("Document")
+                  if d.get("doc_type") == "permit") + 1
+    return f"{prefix}-{year}-{seq:03d}"
+
+
+async def _create_record(rec_type: str, body: dict, materialiser) -> dict:
+    """Shared handler: build a manual-intake record, materialise it, persist,
+    invalidate the caches it affects, and report the downstream consequences."""
+    from . import stores
+    from .ingest import normalize_tag
+    from .ontology import Provenance
+    kg = get_graph()
+    date = (body.get("date") or "").strip() or None
+    rid = (body.get("id") or "").strip() or _new_record_id(kg, rec_type, date)
+    body = {**body, "id": rid}
+    if body.get("equipment"):
+        body["equipment"] = normalize_tag(body["equipment"])
+    prov = Provenance(source_doc_id=rid, extractor="manual_intake",
+                      confidence=1.0, effective_date=date)
+    chunks: list = []
+    new_equipment: list = []
+    created = materialiser(kg, body, prov, chunks, new_equipment)
+    kg.save()
+    if chunks:
+        stores.upsert_text_chunks(chunks)
+
+    eq = created.get("equipment")
+    downstream = []
+    if created.get("in_timeline") and eq:
+        downstream.append(f"added to {eq} timeline → Diagnostics for {eq} updated")
+    if new_equipment:
+        downstream.append(f"new asset(s) created: {', '.join(new_equipment)}")
+
+    result = {"created": created.get("id"), "record_type": rec_type,
+              "equipment": eq, "new_equipment": new_equipment,
+              "provenance": {"extractor": "manual_intake", "confidence": 1.0}}
+
+    # recompute only the caches this record type affects
+    if rec_type == "inspection":
+        (config.DATA_DIR / "compliance_register.json").unlink(missing_ok=True)
+        (config.DATA_DIR / "audit_package.json").unlink(missing_ok=True)
+        downstream.append("compliance status will re-evaluate")
+    if rec_type == "incident":
+        (config.DATA_DIR / "patterns.json").unlink(missing_ok=True)
+        (config.DATA_DIR / "warnings.json").unlink(missing_ok=True)
+        downstream.append("incident patterns / warnings will recompute against it")
+    if rec_type == "permit":
+        # the live money-shot: does this upcoming permit re-assemble a known
+        # precursor signature? recompute now and surface any freshly-fired warning.
+        (config.DATA_DIR / "patterns.json").unlink(missing_ok=True)
+        fresh = [w for w in lessons.evaluate_upcoming() if w.get("permit") == rid]
+        result["warnings"] = fresh
+        if fresh:
+            pats = "; ".join(sorted({w["pattern"] for w in fresh}))
+            hist = sorted({e for w in fresh for e in w.get("historical_events", [])})
+            downstream.append(f"{len(fresh)} new warning(s) triggered — matches "
+                              f"{pats} ({', '.join(hist)})")
+        else:
+            downstream.append("no precursor match — logged as upcoming work")
+
+    result["downstream"] = downstream
+    result["summary"] = f"{rid} logged" + (" → " + " → ".join(downstream) if downstream else "")
+    return result
+
+
+@app.post("/api/records/incident")
+async def api_record_incident(body: dict):
+    from . import intake
+    return await _create_record("incident", body, intake.add_incident)
+
+
+@app.post("/api/records/work-order")
+async def api_record_work_order(body: dict):
+    from . import intake
+    return await _create_record("work_order", body, intake.add_work_order)
+
+
+@app.post("/api/records/inspection")
+async def api_record_inspection(body: dict):
+    from . import intake
+    return await _create_record("inspection", body, intake.add_inspection)
+
+
+@app.post("/api/records/permit")
+async def api_record_permit(body: dict):
+    from . import intake
+    return await _create_record("permit", body, intake.add_permit)
+
+
 @app.post("/api/ingest/table")
 async def api_ingest_table(file: UploadFile, record_type: str):
     """Bulk CMMS-export intake: a CSV/JSON of many work orders / inspections /

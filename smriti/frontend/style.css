@@ -438,6 +438,57 @@ table.evaltab td { font-variant-numeric: tabular-nums; color: var(--ink-2); }
 .result-ok .ent { display: inline-block; background: var(--surface); border: 1px solid var(--good-line);
   color: var(--ink-2); border-radius: 6px; padding: 1px 7px; margin: 2px 3px 0 0; font-size: 11.5px; }
 
+/* ---------- structured intake hub ---------- */
+.intake-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 16px;
+  border-bottom: 1px solid var(--line); padding-bottom: 0; }
+.itab { appearance: none; background: none; border: none; cursor: pointer;
+  padding: 9px 14px; font-size: 13.5px; font-weight: 600; color: var(--ink-2);
+  border-bottom: 2px solid transparent; margin-bottom: -1px; border-radius: 7px 7px 0 0;
+  transition: color .13s, background .13s, border-color .13s; }
+.itab:hover { color: var(--ink); background: var(--surface-2); }
+.itab.active { color: var(--s1-deep); border-bottom-color: var(--s1); }
+.intake-card { max-width: 720px; }
+.intake-card .tag-soft { font-size: 11px; font-weight: 600; color: var(--ink-3);
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 20px;
+  padding: 2px 9px; text-transform: none; letter-spacing: 0; margin-left: 6px; vertical-align: middle; }
+.intake-fields { grid-template-columns: 1fr 1fr; }
+.intake-fields label.half { grid-column: auto; }
+.intake-fields label.full { grid-column: span 2; }
+.intake-fields textarea {
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line-strong);
+  border-radius: 8px; padding: 8px 10px; font-size: 14px; font-weight: 400; font-family: inherit;
+  text-transform: none; letter-spacing: 0; resize: vertical; min-height: 62px; }
+.intake-fields textarea:focus { outline: none; border-color: var(--s1);
+  box-shadow: 0 0 0 3px rgba(42,120,214,.12); }
+.req { color: var(--crit-text); }
+.fld-hint { font-size: 11px; font-weight: 500; color: var(--ink-3); text-transform: none;
+  letter-spacing: 0; margin-top: 1px; }
+.prov-chip { display: inline-block; font-size: 11px; font-weight: 600; color: var(--s1-deep);
+  background: var(--s1-tint); border: 1px solid var(--s1-line); border-radius: 20px;
+  padding: 1px 9px; text-transform: none; letter-spacing: 0; }
+.downstream { margin: 8px 0 0 18px; padding: 0; }
+.downstream li { margin: 3px 0; font-size: 12.5px; }
+
+/* ---------- toasts ---------- */
+.toasts { position: fixed; right: 18px; bottom: 18px; z-index: 60; display: flex;
+  flex-direction: column; gap: 10px; max-width: min(400px, 92vw); }
+.toast { display: flex; align-items: flex-start; gap: 10px; background: var(--surface);
+  border: 1px solid var(--line); border-left: 4px solid var(--s1);
+  border-radius: 10px; box-shadow: var(--shadow-lg); padding: 12px 14px; font-size: 13px;
+  color: var(--ink); opacity: 0; transform: translateY(10px); transition: opacity .28s, transform .28s; }
+.toast.in { opacity: 1; transform: translateY(0); }
+.toast-ok { border-left-color: var(--s2); }
+.toast-risk { border-left-color: var(--crit-text); background: var(--crit-bg); }
+.toast-body { flex: 1; line-height: 1.45; }
+.toast-body a { color: var(--s1-deep); font-weight: 600; text-decoration: none; white-space: nowrap; }
+.toast-body a:hover { text-decoration: underline; }
+.toast-x { background: none; border: none; color: var(--ink-3); cursor: pointer; font-size: 13px;
+  padding: 0 2px; line-height: 1; }
+.toast-x:hover { color: var(--ink); }
+@media (prefers-reduced-motion: reduce) {
+  .toast { transition: none; } .itab { transition: none; } .dropzone { transition: none; }
+}
+
 /* ---------- drawer ---------- */
 .drawer {
   position: fixed; right: 0; top: 0; bottom: 0; width: min(440px, 92vw);

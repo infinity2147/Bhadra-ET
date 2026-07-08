@@ -30,7 +30,7 @@ import re
 
 from . import config, llm, stores
 from .graph import KnowledgeGraph, get_graph
-from .ingest import _next_chunk_id, normalize_tag, tags_in
+from .ingest import _next_chunk_id, link_tags, normalize_tag, tags_in
 from .ontology import Provenance
 
 # ---------------------------------------------------------------- classify + extract (one call)
@@ -124,6 +124,10 @@ def add_work_order(kg, rec, prov, chunks, new_equipment) -> dict:
     if eq:
         kg.add_edge(eq, doc_id + ":rec", "MAINTAINED_BY", prov)
         kg.add_edge(eq, doc_id, "DESCRIBED_BY", prov)
+    closer = (rec.get("closed_by") or "").strip()      # batch links closer -> AUTHORED_BY
+    if closer and kg.node(closer):
+        kg.add_edge(doc_id, closer, "AUTHORED_BY", prov)
+    link_tags(kg, doc_id, rec.get("findings", ""), prov)   # mirror batch tag-linking
     text = (f"Work order {doc_id} ({rec.get('wo_type','CM')}) on {eq} dated "
             f"{rec.get('date','')}: {rec.get('title','')}. Findings: "
             f"{rec.get('findings','')} Parts: {rec.get('parts','')}. "
@@ -167,6 +171,7 @@ def add_incident(kg, rec, prov, chunks, new_equipment) -> dict:
         if not kg.node(area):
             kg.add_node(area, "Area", prov, name=area)
         kg.add_edge(doc_id + ":rec", area, "INVOLVES", prov)
+    link_tags(kg, doc_id, f"{rec.get('narrative','')} {rec.get('precursors','')}", prov)
     text = (f"{rec.get('category','incident')} {doc_id} on {rec.get('date','')} at "
             f"{area} ({eq}): {rec.get('title','')}. {rec.get('narrative','')} "
             f"Root cause: {rec.get('root_cause','')} Precursor conditions: "

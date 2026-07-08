@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <title>SMRITI — Unit 4 Operations Brain</title>
-<link rel="stylesheet" href="/static/style.css?v=11">
+<link rel="stylesheet" href="/static/style.css?v=12">
 </head>
 <body data-palette="#2a78d6,#1baf7a">
 <div class="app">
@@ -153,22 +153,40 @@
         <div id="comp-out" class="scroll-pane"></div>
       </section>
 
-      <!-- ADD DATA -->
+      <!-- ADD DATA — structured intake hub -->
       <section id="view-add" class="view">
         <div class="panel-head">
           <h2>Add to the knowledge fabric</h2>
-          <p class="hint">Anything you add flows into the graph and is live immediately —
-             new assets appear in <b>Assets</b> and <b>Diagnostics</b>, documents become
-             searchable and citable in <b>Ask</b>, and <b>Warnings</b> / <b>Compliance</b>
-             recompute with the new records.</p>
+          <p class="hint">Log a record and it is <b>live instantly</b> — no restart, no
+             re-ingest. Work orders and incidents land in the <b>Diagnostics</b> timeline,
+             an upcoming permit is matched against the plant's own precursor history in
+             <b>Warnings</b>, inspections re-evaluate <b>Compliance</b>. Every hand-entered
+             record is stamped <span class="prov-chip">manual&nbsp;intake · confidence&nbsp;1.0</span>
+             for audit.</p>
         </div>
+
+        <div class="intake-tabs" id="intake-tabs" role="tablist">
+          <button class="itab active" data-tab="incident">Incident</button>
+          <button class="itab" data-tab="work_order">Work order</button>
+          <button class="itab" data-tab="inspection">Inspection</button>
+          <button class="itab" data-tab="permit">Permit</button>
+          <button class="itab" data-tab="asset">Asset</button>
+          <button class="itab" data-tab="upload">Upload docs</button>
+          <button class="itab" data-tab="bulk">Bulk import</button>
+        </div>
+
         <div class="scroll-pane">
-          <div class="add-grid">
-            <div class="card">
-              <h4>New asset</h4>
-              <p class="sub" style="margin-bottom:12px">Register a piece of equipment.</p>
+          <!-- structured record forms (incident / work_order / inspection / permit) render here -->
+          <div id="intake-form-host" class="intake-panel"></div>
+
+          <!-- ASSET -->
+          <div class="intake-panel" data-panel="asset" hidden>
+            <div class="card intake-card">
+              <h4>Register an asset</h4>
+              <p class="sub" style="margin-bottom:14px">Add a piece of equipment. It appears
+                 immediately in Assets and Diagnostics and becomes searchable in Ask.</p>
               <div class="form">
-                <label>Tag<input id="f-tag" placeholder="e.g. P-205"></label>
+                <label>Tag <span class="req">*</span><input id="f-tag" placeholder="e.g. P-205"></label>
                 <label>Type<input id="f-type" placeholder="e.g. centrifugal_pump"></label>
                 <label>Service<input id="f-service" placeholder="e.g. Boiler feed water"></label>
                 <label>Area<input id="f-area" list="area-list" placeholder="e.g. Area 2"><datalist id="area-list"></datalist></label>
@@ -177,37 +195,42 @@
                 </label>
                 <label>Manufacturer<input id="f-mfr" placeholder="optional"></label>
                 <label>Model<input id="f-model" placeholder="optional"></label>
-                <label>Install date<input id="f-install" placeholder="YYYY-MM-DD"></label>
+                <label>Install date<input id="f-install" type="date"></label>
               </div>
-              <button id="add-asset-btn" class="primary" style="margin-top:12px">Add asset</button>
+              <button id="add-asset-btn" class="primary" style="margin-top:14px">Add asset</button>
               <div id="add-asset-result" class="add-result"></div>
             </div>
+          </div>
 
-            <div class="card">
-              <h4>Upload documents</h4>
-              <p class="sub" style="margin-bottom:12px">Drop in <b>any</b> PDF or text —
-                 work order, inspection, SOP, incident report, permit, OEM manual or
-                 regulation, one or many at once. SMRITI <b>identifies each document's
-                 type itself</b> and extracts it into the right typed record — so a work
-                 order lands in the timeline, an incident feeds Warnings, an SOP becomes
-                 the current revision. Text + visual index, no OCR.</p>
+          <!-- UPLOAD -->
+          <div class="intake-panel" data-panel="upload" hidden>
+            <div class="card intake-card">
+              <h4>Upload documents <span class="tag-soft">unstructured long tail</span></h4>
+              <p class="sub" style="margin-bottom:14px">For emails, OEM manuals, scanned
+                 reports and mixed PDFs. Drop in one or many — SMRITI <b>identifies each
+                 document's type itself</b> and extracts it into the right typed record
+                 (text + visual index, no OCR). For the four core record types, the
+                 structured tabs above give you exact fields.</p>
               <label class="dropzone" id="dropzone">
                 <input type="file" id="doc-file" accept=".pdf,.txt,.md" multiple hidden>
                 <svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--ink-3)"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
                 <div id="dz-text">Drop files here, or click to choose (multiple allowed)</div>
               </label>
-              <button id="upload-btn" class="primary" style="margin-top:12px" disabled>Ingest documents</button>
+              <button id="upload-btn" class="primary" style="margin-top:14px" disabled>Ingest documents</button>
               <div id="upload-result" class="add-result"></div>
             </div>
+          </div>
 
-            <div class="card">
-              <h4>Bulk import (CMMS export)</h4>
-              <p class="sub" style="margin-bottom:12px">Load years of history in one shot.
+          <!-- BULK -->
+          <div class="intake-panel" data-panel="bulk" hidden>
+            <div class="card intake-card">
+              <h4>Bulk import <span class="tag-soft">CMMS export</span></h4>
+              <p class="sub" style="margin-bottom:14px">Load years of history in one shot.
                  Export a <b>CSV or JSON</b> table from SAP&nbsp;PM / Maximo / your CMMS —
-                 SMRITI maps the columns to typed records (no per-row AI), so thousands of
-                 rows flow straight into the fabric. Pick what the rows are:</p>
+                 columns map to typed records (no per-row AI), so thousands of rows flow
+                 straight into the fabric.</p>
               <div class="form">
-                <label>Record type
+                <label>These rows are
                   <select id="bulk-type">
                     <option value="work_order">Work orders</option>
                     <option value="inspection">Inspections</option>
@@ -217,12 +240,12 @@
                   </select>
                 </label>
               </div>
-              <label class="dropzone" id="bulk-dropzone" style="margin-top:10px">
+              <label class="dropzone" id="bulk-dropzone" style="margin-top:12px">
                 <input type="file" id="bulk-file" accept=".csv,.json" hidden>
                 <svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--ink-3)"><path d="M3 3h18v18H3z"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
                 <div id="bulk-dz-text">Drop a CSV/JSON here, or click to choose</div>
               </label>
-              <button id="bulk-btn" class="primary" style="margin-top:12px" disabled>Import table</button>
+              <button id="bulk-btn" class="primary" style="margin-top:14px" disabled>Import table</button>
               <div id="bulk-result" class="add-result"></div>
             </div>
           </div>
@@ -244,6 +267,9 @@
   </div>
 </div>
 
+<!-- toast notifications -->
+<div id="toasts" class="toasts" aria-live="polite"></div>
+
 <!-- citation drawer -->
 <div id="drawer" class="drawer hidden">
   <div class="drawer-head">
@@ -254,6 +280,6 @@
 </div>
 <div id="scrim" class="scrim hidden"></div>
 
-<script src="/static/app.js?v=11"></script>
+<script src="/static/app.js?v=12"></script>
 </body>
 </html>

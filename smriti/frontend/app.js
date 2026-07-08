@@ -663,14 +663,184 @@ function invalidateFabricViews() {
   refreshGraphChip();
 }
 
-function loadAddForm() {
-  // populate the area datalist from existing equipment
+/* ---------------- toast notifications ---------------- */
+function toast(html, kind = "ok", ms = 9000) {
+  const host = $("#toasts");
+  if (!host) return;
+  const el = document.createElement("div");
+  el.className = `toast toast-${kind}`;
+  el.innerHTML = `<div class="toast-body">${html}</div>
+    <button class="toast-x" aria-label="dismiss">✕</button>`;
+  el.querySelector(".toast-x").onclick = () => el.remove();
+  host.appendChild(el);
+  requestAnimationFrame(() => el.classList.add("in"));
+  if (ms) setTimeout(() => { el.classList.remove("in"); setTimeout(() => el.remove(), 300); }, ms);
+}
+
+/* ---------------- structured intake hub ---------------- */
+const TODAY = new Date().toISOString().slice(0, 10);
+const TOMORROW = new Date(Date.now() + 864e5).toISOString().slice(0, 10);
+const FORM_SPECS = {
+  incident: {
+    endpoint: "/api/records/incident", title: "Log an incident / near-miss",
+    blurb: "Feeds the failure timeline, RCA and — via its precursors — the proactive warning engine.",
+    submit: "Log incident", icon: "warn",
+    fields: [
+      { k: "date", label: "Date", type: "date", val: TODAY, req: true, half: true },
+      { k: "equipment", label: "Equipment tag", ph: "e.g. P-101", req: true, half: true, tag: true },
+      { k: "area", label: "Area", ph: "e.g. Area 1", half: true },
+      { k: "category", label: "Category", type: "select", half: true,
+        opts: ["near-miss", "mechanical", "process-upset", "fire", "gas-release", "electrical", "other"] },
+      { k: "title", label: "Title", ph: "one-line summary" },
+      { k: "narrative", label: "What happened", type: "area", ph: "Sequence of events…" },
+      { k: "root_cause", label: "Root cause", type: "area", ph: "Why it happened…" },
+      { k: "precursors", label: "Precursor conditions", type: "area", req: true,
+        hint: "Warnings match future work against these — be specific (season, state, missed step).",
+        ph: "e.g. monsoon; purge < 4 h; standby not aligned; gas test passed" },
+      { k: "actions", label: "Corrective actions", type: "area", ph: "What was/should be done…" },
+      { k: "downtime_h", label: "Downtime (h)", type: "number", half: true },
+    ],
+  },
+  work_order: {
+    endpoint: "/api/records/work-order", title: "Log a work order",
+    blurb: "Lands in the equipment's maintenance timeline and becomes evidence for Diagnostics/RCA.",
+    submit: "Log work order", icon: "s1",
+    fields: [
+      { k: "date", label: "Date", type: "date", val: TODAY, req: true, half: true },
+      { k: "equipment", label: "Equipment tag", ph: "e.g. P-101", req: true, half: true, tag: true },
+      { k: "wo_type", label: "Type", type: "select", half: true, opts: ["CM", "PM", "breakdown"] },
+      { k: "downtime_h", label: "Downtime (h)", type: "number", half: true },
+      { k: "title", label: "Title", ph: "e.g. Mechanical seal replacement" },
+      { k: "findings", label: "Findings / work performed", type: "area", ph: "What was found and done…" },
+      { k: "parts", label: "Parts used", ph: "e.g. mechanical seal, bearing", half: true },
+      { k: "closed_by", label: "Closed by", ph: "technician name", half: true },
+    ],
+  },
+  inspection: {
+    endpoint: "/api/records/inspection", title: "Record an inspection",
+    blurb: "Adds to the equipment's inspection history and re-evaluates its compliance status.",
+    submit: "Record inspection", icon: "s1",
+    fields: [
+      { k: "date", label: "Date", type: "date", val: TODAY, req: true, half: true },
+      { k: "equipment", label: "Equipment tag", ph: "e.g. T-301", req: true, half: true, tag: true },
+      { k: "method", label: "Method", ph: "e.g. UT thickness, vibration, PSV pop test", half: true },
+      { k: "result", label: "Result", type: "select", half: true, opts: ["pass", "advisory", "fail"] },
+      { k: "text", label: "Findings / measurements", type: "area", ph: "Readings, observations…" },
+    ],
+  },
+  permit: {
+    endpoint: "/api/records/permit", title: "Raise a permit to work",
+    blurb: "An upcoming permit is matched live against the plant's own incident precursor signatures.",
+    submit: "Raise permit", icon: "warn",
+    fields: [
+      { k: "date", label: "Planned date", type: "date", val: TOMORROW, req: true, half: true,
+        hint: "Today or later → evaluated as upcoming work." },
+      { k: "ptype", label: "Permit type", type: "select", half: true,
+        opts: ["confined space entry", "hot work", "work at height", "electrical isolation", "excavation", "other"] },
+      { k: "equipment", label: "Equipment tag", ph: "e.g. TK-401", half: true, tag: true },
+      { k: "area", label: "Area", ph: "e.g. Area 4", half: true },
+      { k: "text", label: "Scope of work", type: "area",
+        ph: "Describe the job, conditions and any deviations (e.g. shortened purge)…" },
+    ],
+  },
+};
+
+let intakeTab = "incident";
+function fieldHTML(f) {
+  const req = f.req ? ` <span class="req">*</span>` : "";
+  const hint = f.hint ? `<span class="fld-hint">${esc(f.hint)}</span>` : "";
+  let ctrl;
+  if (f.type === "select")
+    ctrl = `<select data-k="${f.k}">${f.opts.map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join("")}</select>`;
+  else if (f.type === "area")
+    ctrl = `<textarea data-k="${f.k}" rows="3" placeholder="${esc(f.ph || "")}"></textarea>`;
+  else
+    ctrl = `<input data-k="${f.k}" type="${f.type || "text"}" placeholder="${esc(f.ph || "")}"
+             value="${esc(f.val || "")}"${f.tag ? ' list="tag-list"' : ""}>`;
+  return `<label class="${f.half ? "half" : "full"}${f.type === "area" ? " full" : ""}">
+    ${esc(f.label)}${req}${ctrl}${hint}</label>`;
+}
+function renderIntakeForm(tab) {
+  const spec = FORM_SPECS[tab], host = $("#intake-form-host");
+  if (!spec || !host) return;
+  host.innerHTML = `<div class="card intake-card">
+    <h4>${esc(spec.title)}</h4>
+    <p class="sub" style="margin-bottom:14px">${esc(spec.blurb)}</p>
+    <datalist id="tag-list"></datalist>
+    <div class="form intake-fields">${spec.fields.map(fieldHTML).join("")}</div>
+    <button class="primary intake-submit" style="margin-top:14px">${esc(spec.submit)}</button>
+    <div class="add-result intake-result"></div>
+  </div>`;
+  // populate tag datalist
+  getJSON("/api/equipment").then(eq => {
+    const dl = $("#tag-list", host);
+    if (dl) dl.innerHTML = eq.map(e => `<option value="${esc(e.tag)}">`).join("");
+  }).catch(() => {});
+  $(".intake-submit", host).onclick = () => submitRecord(tab, spec, host);
+}
+
+async function submitRecord(tab, spec, host) {
+  const body = {};
+  $$("[data-k]", host).forEach(el => { const v = el.value.trim(); if (v) body[el.dataset.k] = el.dataset.k === "downtime_h" ? Number(v) : v; });
+  const out = $(".intake-result", host), btn = $(".intake-submit", host);
+  const missing = spec.fields.filter(f => f.req && !body[f.k]);
+  if (missing.length) {
+    out.innerHTML = `<div class="result-err">Required: ${missing.map(f => esc(f.label)).join(", ")}.</div>`;
+    return;
+  }
+  btn.disabled = true;
+  out.innerHTML = loaderHTML("writing typed record · linking graph · recomputing…", "#2a78d6");
+  try {
+    const r = await fetch(spec.endpoint, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || d.detail || `HTTP ${r.status}`);
+    out.innerHTML = `<div class="result-ok">
+      <b>${esc(d.created)}</b> logged
+      <span class="prov-chip">${esc(d.provenance?.extractor || "manual_intake")} · confidence ${d.provenance?.confidence ?? 1.0}</span>
+      <ul class="downstream">${(d.downstream || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+    </div>`;
+    // toast + deep link to the most relevant view
+    const warned = (d.warnings || []).length;
+    if (warned) {
+      toast(`⚠️ <b>${warned} new warning${warned > 1 ? "s" : ""} triggered</b> by ${esc(d.created)} —
+        matches the plant's own precursor history.
+        <a href="#warn" onclick="activateView('warn')">View →</a>`, "risk", 14000);
+    } else if (d.equipment) {
+      toast(`<b>${esc(d.created)}</b> logged → now in <b>${esc(d.equipment)}</b>'s timeline.
+        <a href="#" onclick="activateView('rca');setTimeout(()=>{const s=document.getElementById('rca-tag');if(s){s.value='${esc(d.equipment)}';}},150)">Open Diagnostics →</a>`, "ok");
+    } else {
+      toast(`<b>${esc(d.created)}</b> logged into the fabric.`, "ok");
+    }
+    // reset non-date fields
+    $$("[data-k]", host).forEach(el => { if (el.type !== "date" && el.tagName !== "SELECT") el.value = ""; });
+    invalidateFabricViews();
+  } catch (e) {
+    out.innerHTML = `<div class="result-err">${esc(e.message)}</div>`;
+  }
+  btn.disabled = false;
+}
+
+function switchIntakeTab(tab) {
+  intakeTab = tab;
+  $$(".itab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+  const structured = FORM_SPECS[tab];
+  $("#intake-form-host").hidden = !structured;
+  $$(".intake-panel[data-panel]").forEach(p => p.hidden = p.dataset.panel !== tab);
+  if (structured) renderIntakeForm(tab);
+  else if (tab === "asset") loadAssetDatalist();
+}
+$$("#intake-tabs .itab").forEach(t => t.addEventListener("click", () => switchIntakeTab(t.dataset.tab)));
+
+function loadAssetDatalist() {
   getJSON("/api/equipment").then(eq => {
     const areas = [...new Set(eq.map(e => e.area).filter(Boolean))].sort();
     const dl = $("#area-list");
     if (dl) dl.innerHTML = areas.map(a => `<option value="${esc(a)}">`).join("");
   }).catch(() => {});
 }
+function loadAddForm() { switchIntakeTab(intakeTab); }
 
 $("#add-asset-btn")?.addEventListener("click", async () => {
   const body = {
