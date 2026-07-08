@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <title>SMRITI — Unit 4 Operations Brain</title>
-<link rel="stylesheet" href="/static/style.css?v=8">
+<link rel="stylesheet" href="/static/style.css?v=9">
 </head>
 <body data-palette="#2a78d6,#1baf7a">
 <div class="app">
@@ -45,6 +45,11 @@
       <button class="nav-item" data-view="eval" title="Evaluation">
         <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>
         <span class="nav-label">Evaluation</span>
+      </button>
+      <div class="nav-sep"></div>
+      <button class="nav-item" data-view="add" title="Add data">
+        <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="nav-label">Add&nbsp;data</span>
       </button>
     </nav>
 
@@ -147,6 +152,54 @@
         <div id="comp-out" class="scroll-pane"></div>
       </section>
 
+      <!-- ADD DATA -->
+      <section id="view-add" class="view">
+        <div class="panel-head">
+          <h2>Add to the knowledge fabric</h2>
+          <p class="hint">Anything you add flows into the graph and is live immediately —
+             new assets appear in <b>Assets</b> and <b>Root Cause</b>, documents become
+             searchable and citable in <b>Ask</b>, and <b>Warnings</b> / <b>Compliance</b>
+             recompute with the new records.</p>
+        </div>
+        <div class="scroll-pane">
+          <div class="add-grid">
+            <div class="card">
+              <h4>New asset</h4>
+              <p class="sub" style="margin-bottom:12px">Register a piece of equipment.</p>
+              <div class="form">
+                <label>Tag<input id="f-tag" placeholder="e.g. P-205"></label>
+                <label>Type<input id="f-type" placeholder="e.g. centrifugal_pump"></label>
+                <label>Service<input id="f-service" placeholder="e.g. Boiler feed water"></label>
+                <label>Area<input id="f-area" list="area-list" placeholder="e.g. Area 2"><datalist id="area-list"></datalist></label>
+                <label>Criticality
+                  <select id="f-crit"><option value="high">high</option><option value="medium" selected>medium</option><option value="low">low</option></select>
+                </label>
+                <label>Manufacturer<input id="f-mfr" placeholder="optional"></label>
+                <label>Model<input id="f-model" placeholder="optional"></label>
+                <label>Install date<input id="f-install" placeholder="YYYY-MM-DD"></label>
+              </div>
+              <button id="add-asset-btn" class="primary" style="margin-top:12px">Add asset</button>
+              <div id="add-asset-result" class="add-result"></div>
+            </div>
+
+            <div class="card">
+              <h4>Upload document</h4>
+              <p class="sub" style="margin-bottom:12px">PDF or text — P&amp;ID, work order,
+                 SOP, inspection, incident report, OEM manual, permit or regulation.
+                 SMRITI parses it, extracts typed entities against the ontology, indexes
+                 it (text + visual, no OCR) and links it into the graph.</p>
+              <label class="dropzone" id="dropzone">
+                <input type="file" id="doc-file" accept=".pdf,.txt,.md" hidden>
+                <svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:var(--ink-3)"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                <div id="dz-text">Drop a file here, or click to choose</div>
+              </label>
+              <button id="upload-btn" class="primary" style="margin-top:12px" disabled>Ingest document</button>
+              <div id="upload-result" class="add-result"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- EVALS -->
       <section id="view-eval" class="view">
         <div class="panel-head">
@@ -172,6 +225,6 @@
 </div>
 <div id="scrim" class="scrim hidden"></div>
 
-<script src="/static/app.js?v=8"></script>
+<script src="/static/app.js?v=9"></script>
 </body>
 </html>

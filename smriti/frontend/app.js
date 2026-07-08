@@ -12,6 +12,7 @@ const SECTION_TITLES = {
   warn: "Proactive Warnings",
   comp: "Compliance Register",
   eval: "Evaluation — measured, not claimed",
+  add: "Add to the knowledge fabric",
 };
 function activateView(v) {
   $$(".nav-item").forEach(t => t.classList.toggle("active", t.dataset.view === v));
@@ -26,6 +27,7 @@ function activateView(v) {
   if (v === "eval") loadEvals();
   if (v === "rca") loadEquipment();
   if (v === "assets") loadAssets();
+  if (v === "add") loadAddForm();
 }
 $$(".nav-item").forEach(tab =>
   tab.addEventListener("click", () => activateView(tab.dataset.view)));
@@ -43,7 +45,7 @@ document.addEventListener("click", e => {
 
 window.addEventListener("DOMContentLoaded", () => {
   const v = location.hash.slice(1);
-  if (["assets", "rca", "warn", "comp", "eval"].includes(v)) activateView(v);
+  if (["assets", "rca", "warn", "comp", "eval", "add"].includes(v)) activateView(v);
   else document.body.classList.add("on-ask");
 });
 
@@ -646,3 +648,97 @@ function askAbout(tag) {
   $("#ask-input").value = `Give me a full status on ${tag} — recent failures, root cause, and any compliance issues.`;
   $("#ask-input").focus();
 }
+
+/* ---------------- ADD DATA (assets + document upload) ---------------- */
+function refreshGraphChip() {
+  getJSON("/api/graph/stats").then(d => {
+    const s = d.stats, ig = d.ingest;
+    $("#graph-chip").innerHTML =
+      `${s.nodes} nodes · ${s.edges} edges<br>${ig.text_chunks ?? "?"} chunks · ${ig.visual_pages ?? 0} visual pages`;
+  }).catch(() => {});
+}
+/* after the fabric changes, force the derived views to reload next time */
+function invalidateFabricViews() {
+  assetsLoaded = false; equipmentLoaded = false; compLoaded = false;
+  refreshGraphChip();
+}
+
+function loadAddForm() {
+  // populate the area datalist from existing equipment
+  getJSON("/api/equipment").then(eq => {
+    const areas = [...new Set(eq.map(e => e.area).filter(Boolean))].sort();
+    const dl = $("#area-list");
+    if (dl) dl.innerHTML = areas.map(a => `<option value="${esc(a)}">`).join("");
+  }).catch(() => {});
+}
+
+$("#add-asset-btn")?.addEventListener("click", async () => {
+  const body = {
+    tag: $("#f-tag").value, equipment_type: $("#f-type").value,
+    service: $("#f-service").value, area: $("#f-area").value,
+    criticality: $("#f-crit").value, manufacturer: $("#f-mfr").value,
+    model: $("#f-model").value, install_date: $("#f-install").value,
+  };
+  const btn = $("#add-asset-btn"), out = $("#add-asset-result");
+  if (!body.tag.trim()) { out.innerHTML = `<div class="result-err">Tag is required.</div>`; return; }
+  btn.disabled = true; out.innerHTML = loaderHTML("adding to the fabric…", "#2a78d6");
+  try {
+    const r = await fetch("/api/equipment", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`);
+    out.innerHTML = `<div class="result-ok"><b>${esc(d.tag)}</b> added to
+      <b>${esc(d.area)}</b> — now live in Assets, Root Cause and search.
+      <a href="#assets" onclick="activateView('assets');setTimeout(()=>openAsset('${esc(d.tag)}'),150)">Open ${esc(d.tag)} →</a></div>`;
+    ["f-tag","f-type","f-service","f-mfr","f-model","f-install"].forEach(i => $("#"+i).value = "");
+    invalidateFabricViews();
+  } catch (e) {
+    out.innerHTML = `<div class="result-err">${esc(e.message)}</div>`;
+  }
+  btn.disabled = false;
+});
+
+/* upload document */
+const dz = $("#dropzone"), docFile = $("#doc-file"), upBtn = $("#upload-btn");
+let pendingFile = null;
+function setFile(f) {
+  pendingFile = f;
+  $("#dz-text").textContent = f ? `${f.name} (${(f.size/1024).toFixed(0)} KB)` : "Drop a file here, or click to choose";
+  upBtn.disabled = !f;
+}
+dz?.addEventListener("click", () => docFile.click());
+docFile?.addEventListener("change", () => setFile(docFile.files[0]));
+["dragover","dragenter"].forEach(ev => dz?.addEventListener(ev, e => { e.preventDefault(); dz.classList.add("drag"); }));
+["dragleave","drop"].forEach(ev => dz?.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove("drag"); }));
+dz?.addEventListener("drop", e => { if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
+
+upBtn?.addEventListener("click", async () => {
+  if (!pendingFile) return;
+  const out = $("#upload-result");
+  upBtn.disabled = true;
+  out.innerHTML = loaderHTML("parsing · extracting entities · indexing (text + visual)…", "#d97706");
+  try {
+    const fd = new FormData();
+    fd.append("file", pendingFile);
+    const r = await fetch("/api/ingest", { method: "POST", body: fd });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || d.detail || `HTTP ${r.status}`);
+    const ents = (d.entities || []).map(e =>
+      `<span class="ent">${esc(e.type)}: ${esc(e.id)}</span>`).join("") || "<i>none</i>";
+    out.innerHTML = `<div class="result-ok">
+      <b>${esc(d.doc_id)}</b> ingested — ${d.pages} page(s), ${d.text_chunks} text chunk(s),
+      ${d.visual_pages} visual page(s), ${d.edges_added} graph edge(s).
+      ${d.new_equipment?.length ? `<br>New assets: <b>${d.new_equipment.map(esc).join(", ")}</b> (now in Assets & Root Cause).` : ""}
+      <br><span class="sub">${esc(d.summary || "")}</span>
+      <div style="margin-top:6px">Extracted: ${ents}</div>
+      <div style="margin-top:6px">Now ask about it in <a href="#" onclick="activateView('ask')">Ask</a>.</div>
+    </div>`;
+    setFile(null); docFile.value = "";
+    invalidateFabricViews();
+  } catch (e) {
+    out.innerHTML = `<div class="result-err">${esc(e.message)}</div>`;
+  }
+  upBtn.disabled = false;
+});
