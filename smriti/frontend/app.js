@@ -44,9 +44,15 @@ document.addEventListener("click", e => {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-  const v = location.hash.slice(1);
-  if (["assets", "rca", "warn", "comp", "eval", "add"].includes(v)) activateView(v);
-  else document.body.classList.add("on-ask");
+  const raw = location.hash.slice(1);
+  const [v, arg] = raw.split("=");   // e.g. #assets=P-101 deep-links to an asset
+  if (["assets", "rca", "warn", "comp", "eval", "add"].includes(v)) {
+    activateView(v);
+    if (v === "assets" && arg) setTimeout(() => openAsset(decodeURIComponent(arg)), 200);
+    if (v === "rca" && arg) setTimeout(() => {
+      const s = $("#rca-tag"); if (s) s.value = decodeURIComponent(arg); $("#rca-run")?.click();
+    }, 300);
+  } else document.body.classList.add("on-ask");
 });
 
 /* ---------------- helpers ---------------- */
@@ -56,6 +62,34 @@ function esc(s) {
 }
 function md(s) { // minimal: **bold**, newlines preserved by CSS
   return esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+}
+/* classify a timeline event by kind → semantic color class + label */
+function eventClass(kind = "") {
+  const k = String(kind).toLowerCase();
+  if (k.startsWith("incident") || k.includes("near")) return { c: "risk", t: "incident" };
+  if (k.includes("fail")) return { c: "risk", t: "inspection · fail" };
+  if (k === "breakdown") return { c: "serious", t: "breakdown" };
+  if (k === "cm") return { c: "serious", t: "corrective (CM)" };
+  if (k === "pm") return { c: "good", t: "preventive (PM)" };
+  if (k.startsWith("inspection")) return { c: "s1", t: k.replace("/", " · ") };
+  return { c: "s1", t: kind || "record" };
+}
+/* vertical, color-coded failure/history timeline (events newest-first) */
+function timelineHTML(events, limit = 40) {
+  const evs = (events || []).slice(0, limit);
+  if (!evs.length) return `<div class="empty-note">No recorded history yet.</div>`;
+  return `<div class="vtimeline">` + evs.map(e => {
+    const { c, t } = eventClass(e.kind);
+    return `<div class="vt-item vt-${c}">
+      <div class="vt-dot"></div>
+      <div class="vt-card">
+        <div class="vt-top"><span class="vt-date">${esc(e.date || "—")}</span>
+          <span class="vt-kind vt-${c}">${esc(t)}</span>
+          <span class="cite" data-evd="${esc(e.id)}">${esc(e.id)}</span></div>
+        <div class="vt-what">${esc(e.what || "")}</div>
+        ${e.detail ? `<div class="vt-detail">${esc(String(e.detail).slice(0, 180))}</div>` : ""}
+      </div></div>`;
+  }).join("") + `</div>`;
 }
 function citeChips(text, citations) {
   return text.replace(/\[(c\d+)\]/g, (_, id) => {
@@ -349,15 +383,15 @@ $("#rca-run").addEventListener("click", async () => {
 });
 function renderRCA(r) {
   const causes = (r.causes || []).map(c => `
-    <div class="card">
-      <h4>#${c.rank} — ${esc(c.cause)}</h4>
-      <div>${esc(c.mechanism)}</div>
-      <div class="evidence-links">${(c.evidence || []).map(id =>
-        `<span class="cite" data-evd="${esc(id)}">${esc(id)}</span>`).join(" ")}</div>
+    <div class="card cause-card">
+      <div class="cause-rank">${c.rank}</div>
+      <div class="cause-body">
+        <h4>${esc(c.cause)}</h4>
+        <div>${esc(c.mechanism)}</div>
+        <div class="evidence-links">evidence: ${(c.evidence || []).map(id =>
+          `<span class="cite" data-evd="${esc(id)}">${esc(id)}</span>`).join(" ")}</div>
+      </div>
     </div>`).join("");
-  const timeline = (r.timeline || []).map(e => `
-    <tr><td>${esc(e.date)}</td><td><span class="cite" data-evd="${esc(e.id)}">${esc(e.id)}</span></td>
-    <td>${esc(e.kind)}</td><td>${esc(e.what)}</td></tr>`).join("");
   const cross = r.cross_asset_pattern || {};
   $("#rca-out").innerHTML = `
     <div class="card">
@@ -369,10 +403,11 @@ function renderRCA(r) {
       </div>
       <div class="sub" style="margin-top:6px">${esc(r.recurrence_risk?.rationale || "")}</div>
     </div>
-    ${cross.found ? `<div class="card warn-card">
-      <h4>⚡ Cross-asset pattern detected</h4>
+    ${cross.found ? `<div class="cross-callout">
+      <div class="cross-icon">⚡</div>
+      <div><h4>Cross-asset pattern detected</h4>
       <div>${esc(cross.detail)}</div>
-      <div style="margin-top:6px"><b>Fleet recommendation:</b> ${esc(cross.recommendation)}</div>
+      <div style="margin-top:6px"><b>Fleet recommendation:</b> ${esc(cross.recommendation)}</div></div>
     </div>` : ""}
     <h3 style="margin:14px 2px 8px">Evidence-ranked causes</h3>${causes}
     <div class="card">
@@ -381,9 +416,7 @@ function renderRCA(r) {
       <b>Preventive</b><ul>${(r.preventive_actions || []).map(a => `<li>${esc(a)}</li>`).join("")}</ul>
     </div>
     <h3 style="margin:14px 2px 8px">Failure timeline</h3>
-    <div class="card" style="overflow-x:auto">
-      <table class="evaltab"><tr><th>date</th><th>record</th><th>type</th><th>event</th></tr>${timeline}</table>
-    </div>`;
+    ${timelineHTML(r.timeline)}`;
 }
 
 /* ---------------- WARNINGS ---------------- */
@@ -594,10 +627,7 @@ async function openAsset(tag) {
     const drawings = (d.drawings || []).map(ov => {
       const c = document.createElement("div"); renderOverlay(c, ov); return c.innerHTML;
     }).join("");
-    const timeline = d.timeline.slice(0, 20).map(ev => `
-      <tr><td>${esc(ev.date)}</td>
-        <td><span class="cite" data-evd="${esc(ev.id)}">${esc(ev.id)}</span></td>
-        <td>${esc(ev.kind)}</td><td>${esc(ev.what || "")}</td></tr>`).join("");
+    const timeline = timelineHTML(d.timeline, 24);
     const regs = d.governing.map(g => `
       <div class="card">
         <div class="meta-row" style="margin:0 0 4px">
@@ -629,9 +659,7 @@ async function openAsset(tag) {
       ${drawings ? `<h3 style="margin:16px 2px 6px">On the drawing</h3>${drawings}` : ""}
       <h3 style="margin:16px 2px 6px">Governing regulations</h3>${regs}
       <h3 style="margin:16px 2px 6px">History timeline</h3>
-      <div class="card" style="overflow-x:auto">
-        <table class="evaltab"><tr><th>date</th><th>record</th><th>type</th><th>event</th></tr>${timeline}</table>
-      </div>`;
+      ${timeline}`;
     out.scrollTop = 0;
   } catch (e) {
     out.innerHTML = `<div class="card">error: ${esc(e.message)}</div>`;

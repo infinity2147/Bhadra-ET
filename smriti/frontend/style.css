@@ -438,6 +438,46 @@ table.evaltab td { font-variant-numeric: tabular-nums; color: var(--ink-2); }
 .result-ok .ent { display: inline-block; background: var(--surface); border: 1px solid var(--good-line);
   color: var(--ink-2); border-radius: 6px; padding: 1px 7px; margin: 2px 3px 0 0; font-size: 11.5px; }
 
+/* ---------- visual failure timeline ---------- */
+.vtimeline { position: relative; margin: 4px 0 4px 6px; padding-left: 22px; }
+.vtimeline::before { content: ""; position: absolute; left: 5px; top: 4px; bottom: 4px;
+  width: 2px; background: var(--line-strong); border-radius: 2px; }
+.vt-item { position: relative; margin: 0 0 10px; }
+.vt-dot { position: absolute; left: -22px; top: 6px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--s1); box-shadow: 0 0 0 3px var(--surface); z-index: 1; }
+.vt-s1 .vt-dot { background: var(--s1); }
+.vt-good .vt-dot { background: var(--good-text); }
+.vt-serious .vt-dot { background: var(--serious-text); }
+.vt-risk .vt-dot { background: var(--crit-text); }
+.vt-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 9px 12px; box-shadow: var(--shadow-sm); transition: box-shadow .13s, border-color .13s; }
+.vt-item:hover .vt-card { box-shadow: var(--shadow-md); border-color: var(--line-strong); }
+.vt-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.vt-date { font-variant-numeric: tabular-nums; font-size: 12px; font-weight: 700; color: var(--ink); }
+.vt-kind { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px;
+  padding: 1px 7px; border-radius: 20px; }
+.vt-kind.vt-s1 { background: var(--s1-tint); color: var(--s1-deep); }
+.vt-kind.vt-good { background: var(--good-bg); color: var(--good-text); }
+.vt-kind.vt-serious { background: var(--serious-bg); color: var(--serious-text); }
+.vt-kind.vt-risk { background: var(--crit-bg); color: var(--crit-text); }
+.vt-what { font-size: 13.5px; font-weight: 600; margin-top: 4px; color: var(--ink); }
+.vt-detail { font-size: 12.5px; color: var(--ink-2); margin-top: 2px; }
+.empty-note { color: var(--ink-3); font-size: 13.5px; padding: 12px 2px; }
+
+/* ---------- RCA cause cards + cross-asset callout ---------- */
+.cause-card { display: flex; gap: 12px; align-items: flex-start; }
+.cause-rank { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--s1); color: #fff; font-weight: 700; font-size: 13px;
+  display: grid; place-items: center; margin-top: 2px; }
+.cause-card:first-of-type .cause-rank { background: var(--crit-text); }
+.cause-body { flex: 1; }
+.cross-callout { display: flex; gap: 12px; align-items: flex-start;
+  background: linear-gradient(180deg, var(--warn-bg), var(--surface));
+  border: 1px solid var(--warn-line); border-left: 4px solid var(--warn-text);
+  border-radius: 12px; padding: 13px 15px; margin: 4px 0; box-shadow: var(--shadow-sm); }
+.cross-icon { font-size: 22px; line-height: 1; }
+.cross-callout h4 { margin: 0 0 4px; }
+
 /* ---------- structured intake hub ---------- */
 .intake-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 16px;
   border-bottom: 1px solid var(--line); padding-bottom: 0; }
