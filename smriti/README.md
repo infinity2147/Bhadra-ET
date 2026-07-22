@@ -25,7 +25,6 @@ vanilla-RAG baseline.
 |---|---|
 | **Working prototype** | `smriti/` — run it (below); live at `http://localhost:8000` |
 | **Pitch deck** (10 slides, ~4–5 min) | [`docs/pitch-deck.html`](docs/pitch-deck.html) — open in a browser, press **F** for fullscreen; **P**→Ctrl/Cmd-P exports PDF |
-| **Pitch + demo script** (timed) | [`docs/pitch-script.md`](docs/pitch-script.md) — slide narration + exact live-demo walkthrough |
 | **Architecture diagram** | [`docs/architecture.html`](docs/architecture.html) / [`docs/architecture.pdf`](docs/architecture.pdf) — standalone, one page |
 | **Full project document** (detailed PDF) | [`docs/full-document.html`](docs/full-document.html) / [`docs/full-document.pdf`](docs/full-document.pdf) — the complete write-up: problem → architecture → agents → intake → compliance → corpus → evaluation → grounded decisions → roadmap |
 | **Design decisions** (grounded) | [`docs/decisions.md`](docs/decisions.md) — every stack choice tied to research/constraints |

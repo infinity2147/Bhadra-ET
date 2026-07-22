@@ -14,3 +14,6 @@ data/
 Thumbs.db
 node_modules/
 *.log
+
+# demo script — kept local, not published
+smriti/docs/pitch-script.md
