@@ -1,8 +1,8 @@
-# Corpus Design — "Bharat Petrochem Ltd., Refinery Unit 4" (fictional plant)
+# Reference Dataset — "Bharat Petrochem Ltd., Refinery Unit 4" (illustrative plant)
 
 Every document in the corpus refers to the same equipment tags, people, and history so the
 knowledge graph forms real cross-document links. This file is the single source of truth for
-corpus consistency; the generator script (`scripts/gen_corpus.py`) and hand-written documents
+dataset consistency; the generator script (`scripts/gen_corpus.py`) and hand-written documents
 must follow it exactly.
 
 **Real-world grounding rule:** equipment physics, failure modes, and regulatory clauses are
@@ -15,16 +15,16 @@ Unit 4 — Crude Distillation Unit (CDU) support systems, commissioned 1998, Mum
 site (monsoon June–September; this seasonality drives the planted failure pattern).
 
 Areas:
-- **Area 1** — Cooling Water System (the hero P&ID)
+- **Area 1** — Cooling Water System (the primary P&ID)
 - **Area 2** — Crude Preheat & Heat Exchange
-- **Area 3** — Fuel Storage (compliance demo: OISD-116/129 apply)
+- **Area 3** — Fuel Storage (OISD-116/129 apply)
 - **Area 4** — Effluent Treatment (confined-space near-miss history lives here)
 
 ## Equipment register (tags recur in EVERY document type)
 
 | Tag | Type | Service | Notes |
 |---|---|---|---|
-| P-101 | Centrifugal pump | Cooling water supply A | **Hero equipment.** Recurring monsoon mechanical-seal failures |
+| P-101 | Centrifugal pump | Cooling water supply A | Primary equipment. Recurring monsoon mechanical-seal failures |
 | P-102 | Centrifugal pump | Cooling water supply B (standby) | Healthy twin — the contrast case |
 | P-103 | Centrifugal pump | Cooling water booster | Same seal model as P-101 → cross-asset pattern |
 | P-107 | Centrifugal pump | Effluent transfer, Area 4 | Same seal model → third leg of fleet pattern |
@@ -43,7 +43,7 @@ Areas:
 Instrument tags on the hero P&ID: TI-1103 (P-101 discharge temp), PI-1101 (suction pressure),
 FI-1102 (CW flow), LI-3011 (T-301 level).
 
-## The hero P&ID (Drawing D-CW-104 rev 3)
+## The primary P&ID (Drawing D-CW-104 rev 3)
 
 "Cooling Water System — Unit 4, Area 1". Composed as clean SVG from standard symbols
 (research agent confirms source), rendered to PNG for the visual index.
@@ -58,33 +58,32 @@ P-103 boosts CW to Area 2 header (tap after E-201)
 ```
 
 Every symbol gets a DrawingRegion entry {bbox, tag} — hand-curated ground truth standing in
-for the CV digitizer output (honest scoping per spec §3.4c).
+for the CV digitizer output (honest scoping).
 
 Second drawing D-ET-401 rev 1: Area 4 effluent system (TK-401, P-107) — simpler, supports the
 confined-space and fleet-seal narratives.
 
-## Planted history patterns (what the agents must "discover")
+## History patterns (what the agents surface)
 
-### Pattern A — Monsoon seal failures (RCA demo, §5.3)
+### Pattern A — Monsoon seal failures (diagnostics / RCA)
 Work orders across 2019–2025: P-101 mechanical seal replaced Jul 2019, Aug 2021, Jul 2023,
 Sep 2024, Jun 2025 (5 CM work orders, all June–September). P-103 seal failures Aug 2022,
 Jul 2024. P-107 seal failure Sep 2023. All three use seal model "BurgFlow MS-40D".
 Root thread: monsoon → CW turbidity ↑ → STR-101 fouling → intermittent cavitation →
 seal face damage. Inspection reports on STR-101 corroborate (high differential pressure
 readings in monsoon months). E-201 fouling reports explain the high-temp trips of the
-copilot demo question. OEM manual (BurgFlow pump IOM) checklist page: "high discharge
-temperature — check cooler fouling, strainer ΔP, seal flush line" — the visually-retrieved
-page of demo beat §5.2.
+copilot question. OEM manual (BurgFlow pump IOM) checklist page: "high discharge
+temperature — check cooler fouling, strainer ΔP, seal flush line" — the visually-retrieved page.
 
-### Pattern B — Confined-space near-miss precursors (Agent 5 demo, §5.5)
+### Pattern B — Confined-space near-miss precursors (Agent 5)
 - NM-2019-07 (TK-401 entry, Aug 2019): gas test passed at entry, H2S alarm 40 min in —
   purge had been shortened due to schedule pressure; sludge disturbance re-released gas.
 - NM-2022-31 (TK-401 entry, Sep 2022): same signature — monsoon-season high sludge load,
   shortened purge, positive gas reading mid-job.
 - Precursor signature: {confined-space entry, Area 4, monsoon window, purge < 4h, sludge
-  present}. The proactive demo: a *scheduled* permit for TK-401 entry "tomorrow" matches it.
+  present}. A *scheduled* permit for TK-401 entry "tomorrow" matches it.
 
-### Pattern C — Compliance gaps (Agent 4 demo, §5.4)
+### Pattern C — Compliance gaps (Agent 4)
 Planted against real clauses (from regulatory research):
 1. PSV-1101 last tested > allowed interval (OISD-132 pressure-relief testing periodicity) → GAP.
 2. Fire drill record for Area 3 older than required frequency (Factories Act s.38 + state rules /
@@ -92,13 +91,13 @@ Planted against real clauses (from regulatory research):
 3. T-301 external inspection approaching due date (OISD-129) → WARNING (time-aware).
 4. Everything else demonstrably satisfied with citable evidence → the register isn't all red.
 
-### Pattern D — SOP version chain (temporal versioning, §3.5)
+### Pattern D — SOP version chain (temporal versioning)
 SOP-CW-012 "P-101/P-102 Operation & Changeover": rev 1 (2015), rev 2 (2021, adds strainer
 ΔP check), rev 3 (2025-04, adds monsoon-mode weekly seal-flush verification — the *lesson
 learned* from Pattern A written back into procedure). "What is the current procedure?" must
 return rev 3 and be able to show the evolution.
 
-### Pattern E — The retiring expert (knowledge-cliff texture)
+### Pattern E — The retiring expert (knowledge attribution)
 Senior reliability engineer "R. K. Sharma" (retiring): authored the sharpest RCA notes
 (WO-2023 seal failure closeout: "suspect strainer bypass during monsoon — third time I've
 seen this since 2019") and an email thread explaining the CW turbidity mechanism. His name
@@ -118,10 +117,10 @@ on `AUTHORED_BY` edges makes the knowledge-attribution story concrete.
 | Email archive | ~8 | .eml-style text | Sharma thread, RFI about MOV-110 |
 | Permits | 4 | PDF | incl. tomorrow's TK-401 confined-space permit |
 
-## Golden Q&A set (~45 questions, eval §3.6)
+## Golden Q&A set (evaluation)
 
 Categories: factual lookup (10), multi-hop graph (10), visual/drawing (8), RCA (7),
-compliance (5), temporal/version (5). Includes verbatim the demo questions:
+compliance (5), temporal/version (5). Representative questions:
 - "P-101 keeps tripping on high temperature — what feeds it, has this happened before, and
   what does the manual say to check?"
 - "Why does P-101 keep failing?"
