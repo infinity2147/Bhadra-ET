@@ -19,6 +19,25 @@ vanilla-RAG baseline.
 
 ---
 
+## Submission deliverables (ET AI Hackathon 2026 · PS8)
+
+| Deliverable | Where |
+|---|---|
+| **Working prototype** | `smriti/` — run it (below); live at `http://localhost:8000` |
+| **Pitch deck** (10 slides, ~4–5 min) | [`docs/pitch-deck.html`](smriti/docs/pitch-deck.html) — open in a browser, press **F** for fullscreen; **P**→Ctrl/Cmd-P exports PDF |
+| **Pitch + demo script** (timed) | [`docs/pitch-script.md`](smriti/docs/pitch-script.md) — slide narration + exact live-demo walkthrough |
+| **Architecture diagram** | [`docs/architecture.html`](smriti/docs/architecture.html) — standalone, prints to one page |
+| **Design decisions** (grounded) | [`docs/decisions.md`](smriti/docs/decisions.md) — every stack choice tied to research/constraints |
+| **Corpus design** | [`docs/corpus-design.md`](smriti/docs/corpus-design.md) |
+| **Full system handoff** (detailed) | [`docs/HANDOFF.md`](smriti/docs/HANDOFF.md) + [`docs/HANDOFF-2.md`](smriti/docs/HANDOFF-2.md) |
+| **Evaluation** (reproducible) | `eval/golden_qa.json` · `eval/harness.py` · `eval/results.json` |
+| **Demo video** | recorded from the deck + live prototype using the script above |
+
+> To turn the deck / architecture into **PDF**: open the HTML in Chrome → Print → *Save as PDF*
+> (deck is sized for landscape slides; architecture for one landscape page).
+
+---
+
 ## Architecture
 
 ```

@@ -60,19 +60,26 @@ def failure_timeline(tag: str) -> list[dict]:
     for n in nb["nodes"]:
         if not n:
             continue
+        # LLM email-extraction can create typed mention-nodes with partial props;
+        # a timeline event needs a date, so skip any record without one.
+        date = n.get("date")
+        if not date:
+            continue
+        nid = (n.get("id") or "").split(":")[0]
         if n.get("type") == "WorkOrder":
-            events.append({"date": n["date"], "id": n["wo_id"], "kind": n["wo_type"],
-                           "what": n["title"], "detail": n["findings"][:400],
+            events.append({"date": date, "id": n.get("wo_id") or nid,
+                           "kind": n.get("wo_type", "WO"),
+                           "what": n.get("title", ""), "detail": (n.get("findings") or "")[:400],
                            "downtime_h": n.get("downtime_h", 0)})
         elif n.get("type") == "Inspection":
-            events.append({"date": n["date"], "id": n["id"].split(":")[0],
+            events.append({"date": date, "id": nid,
                            "kind": "inspection/" + n.get("result", ""),
-                           "what": n.get("method", ""), "detail": n.get("text", "")[:300]})
+                           "what": n.get("method", ""), "detail": (n.get("text") or "")[:300]})
         elif n.get("type") == "Incident":
-            events.append({"date": n["date"], "id": n["incident_id"],
+            events.append({"date": date, "id": n.get("incident_id") or nid,
                            "kind": "incident/" + n.get("category", ""),
                            "what": n.get("title", ""),
-                           "detail": n.get("narrative", "")[:300]})
+                           "detail": (n.get("narrative") or "")[:300]})
     return sorted(events, key=lambda e: e["date"])
 
 
